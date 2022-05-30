@@ -1,5 +1,8 @@
 http:
   port: 8000
+  maxHeaderMegabytes: 1
+  readTimeout: 10s
+  writeTimeout: 10s
 
 postgres:
 

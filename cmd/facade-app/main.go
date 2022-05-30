@@ -1,11 +1,11 @@
 package main
 
-import "github.com/eugene-krivtsov/idler/internal/app"
+import app "github.com/eugene-krivtsov/idler/internal/app/facade-app"
 
 const (
 	configPath = "config/config"
 )
 
 func main() {
-	app.Run()
+	app.Run(configPath)
 }
