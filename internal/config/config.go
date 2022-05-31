@@ -17,6 +17,7 @@ const (
 type (
 	Config struct {
 		HTTP HTTPConfig
+		Auth AuthConfig
 	}
 
 	HTTPConfig struct {
@@ -25,6 +26,16 @@ type (
 		ReadTimeout        time.Duration `mapstructure:"readTimeout"`
 		WriteTimeout       time.Duration `mapstructure:"writeTimeout"`
 		MaxHeaderMegabytes int           `mapstructure:"maxHeaderMegabytes"`
+	}
+
+	AuthConfig struct {
+		JWT          JWTConfig
+		PasswordSalt string
+	}
+
+	JWTConfig struct {
+		TokenTTL   time.Duration
+		SigningKey string
 	}
 )
 

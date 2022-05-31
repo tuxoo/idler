@@ -9,6 +9,9 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/server"
 	"github.com/eugene-krivtsov/idler/internal/service"
 	"github.com/eugene-krivtsov/idler/internal/transport/rest/handler"
+	"github.com/eugene-krivtsov/idler/pkg/auth"
+	"github.com/eugene-krivtsov/idler/pkg/hash"
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
@@ -19,11 +22,11 @@ import (
 func Run(configPath string) {
 	fmt.Println(`
  ================================================
- \\\   ######\\#####\\\##\\\\\\#####\\\#####   \\\
-  \\\  \\##\\\\##\\##\\##\\\\\\##\\\\\\##\\##   \\\
-   )))   ##))))##))##))##))))))####))))#####     )))
-  ///  //##////##//##//##//////##//////##//##   ///
- ///   ######//#####///######//#####///##//##  ///
+ \\\   ######~~#####~~~##~~~~~~#####~~~#####   \\\
+  \\\  ~~##~~~~##~~##~~##~~~~~~##~~~~~~##~~##   \\\
+   ))) ~~##~~~~##~~##~~##~~~~~~####~~~~#####     )))
+  ///  ~~##~~~~##~~##~~##~~~~~~##~~~~~~##~~##   ///
+ ///   ######~~#####~~~######~~#####~~~##~~##  ///
  ================================================
 	`)
 
@@ -33,17 +36,25 @@ func Run(configPath string) {
 	}
 
 	db, err := postgres.NewPostgresDB(postgres.Config{
-		Port:     viper.GetString("db.port"),
-		Username: viper.GetString("db.username"),
-		DBName:   viper.GetString("db.dbname"),
-		SSLMode:  viper.GetString("db.sslmode"),
-		Host:     os.Getenv("IP_ADDRESS"),
-		Password: os.Getenv("POSTGRES_PASSWORD"),
+		Port:     viper.GetString("postgres.port"),
+		Username: viper.GetString("postgres.username"),
+		DBName:   viper.GetString("postgres.dbname"),
+		SSLMode:  viper.GetString("postgres.sslmode"),
+		//Host:     os.Getenv("IP_ADDRESS"),
+		Host: "localhost",
+		//Password: os.Getenv("POSTGRES_PASSWORD"),
+		Password: "qwerty",
 	})
+
+	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
+	tokenManager := auth.NewJWTTokenManager(cfg.Auth.JWT.SigningKey)
 
 	repositories := repository.NewRepositories(db)
 	services := service.NewServices(service.ServicesDepends{
 		Repositories: repositories,
+		Hasher:       hasher,
+		TokenManager: tokenManager,
+		TokenTTL:     cfg.Auth.JWT.TokenTTL,
 	})
 	handlers := handler.NewHandler(services.Users)
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))

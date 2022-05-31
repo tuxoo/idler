@@ -1,14 +1,14 @@
 package repository
 
 import (
-	"github.com/eugene-krivtsov/idler/internal/model"
+	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
 	"github.com/jmoiron/sqlx"
 )
 
 type Users interface {
-	CreateUser(user model.User) (int, error)
-	GetUser(username, password string) (model.User, error)
+	SaveUser(user entity.User) (int, error)
+	GetUser(name, email, password string) (entity.User, error)
 }
 
 type Repositories struct {
@@ -17,6 +17,6 @@ type Repositories struct {
 
 func NewRepositories(db *sqlx.DB) *Repositories {
 	return &Repositories{
-		Users: postgres.NewUsersRepository(db),
+		Users: postgres.NewUserRepository(db),
 	}
 }

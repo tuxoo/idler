@@ -1,1 +1,41 @@
-version: 3.8
+version: "3.8"
+
+services:
+  postgres-idler:
+    container_name: postgres-idler
+    image: postgres:${POSTGRES_VERSION}
+    restart: on-failure
+    env_file:
+      - .env
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    volumes:
+      - ./.docker-volumes/postgres:/var/lib/postgresql/data
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - ${POSTGRES_PORT}:5432
+    networks:
+      idler-net:
+        ipv4_address: 172.28.1.1
+
+  liquibase-idler:
+    container_name: liquibase-idler
+    image: liquibase/liquibase:${LIQUIBASE_VERSION}
+    restart: on-failure
+    command: --defaultsFile=liquibase.properties update
+    depends_on:
+      - postgres-idler
+    volumes:
+      - ./db/changelog.xml:/liquibase/changelog.xml
+      - ./db/liquibase.properties:/liquibase/liquibase.properties
+      - ./db/changes:/liquibase/changes
+    networks:
+      idler-net:
+        ipv4_address: 172.28.1.2
+
+networks:
+  idler-net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16

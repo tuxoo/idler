@@ -30,5 +30,7 @@ func (h *Handler) Init(host, port string) *gin.Engine {
 		context.String(http.StatusOK, "pong")
 	})
 
+	h.initUsersRoutes(router)
+
 	return router
 }

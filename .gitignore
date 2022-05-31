@@ -1,2 +1,7 @@
 .idea
 .env
+
+db/liquibase.properties
+FAQ.txt
+
+#.docker-volumes

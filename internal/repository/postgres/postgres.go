@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	schema     = "kbase"
 	usersTable = "users"
 )
 
