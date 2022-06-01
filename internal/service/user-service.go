@@ -2,11 +2,9 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository"
-	"github.com/eugene-krivtsov/idler/internal/repository/redis"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	"strconv"
@@ -14,14 +12,14 @@ import (
 )
 
 type UserService struct {
-	repository   repository.Users
+	repository   repository.UserRepository
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 	tokenTTL     time.Duration
-	userCache    redis.Cache
+	userCache    repository.UserCache
 }
 
-func NewUserService(repository repository.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache redis.Cache) *UserService {
+func NewUserService(repository repository.UserRepository, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache repository.UserCache) *UserService {
 	return &UserService{
 		repository:   repository,
 		hasher:       hasher,
@@ -54,11 +52,9 @@ func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (auth.Token
 			return "", err
 		}
 
-		fmt.Println("from db")
 		s.userCache.Set(ctx, dto.Email, &user)
 		return s.tokenManager.GenerateToken(strconv.Itoa(user.Id), s.tokenTTL)
 	}
-	fmt.Println("from cache")
 	return s.tokenManager.GenerateToken(strconv.Itoa(userPointer.Id), s.tokenTTL)
 }
 

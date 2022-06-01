@@ -5,7 +5,6 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository"
-	"github.com/eugene-krivtsov/idler/internal/repository/redis"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	"time"
@@ -15,12 +14,10 @@ type Users interface {
 	SignUp(ctx context.Context, user dto.SignUpDTO) error
 	SignIn(ctx context.Context, user dto.SignInDTO) (auth.Token, error)
 	GetAll() ([]entity.User, error)
-	//GenerateToken(username, password string) (string, error)
-	//ParseToken(token string) (int, error)
 }
 
 type Services struct {
-	Users Users
+	UserService Users
 }
 
 type ServicesDepends struct {
@@ -28,13 +25,13 @@ type ServicesDepends struct {
 	Hasher       hash.PasswordHasher
 	TokenManager auth.TokenManager
 	TokenTTL     time.Duration
-	UserCache    redis.Cache
+	UserCache    repository.UserCache
 }
 
 func NewServices(deps ServicesDepends) *Services {
-	userService := NewUserService(deps.Repositories.Users, deps.Hasher, deps.TokenManager, deps.TokenTTL, deps.UserCache)
+	userService := NewUserService(deps.Repositories.UserRepository, deps.Hasher, deps.TokenManager, deps.TokenTTL, deps.UserCache)
 
 	return &Services{
-		Users: userService,
+		UserService: userService,
 	}
 }

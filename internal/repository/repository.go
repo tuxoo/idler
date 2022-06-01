@@ -6,18 +6,18 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Users interface {
+type UserRepository interface {
 	SaveUser(user entity.User) (int, error)
 	GetUser(email, password string) (entity.User, error)
 	GetAll() ([]entity.User, error)
 }
 
 type Repositories struct {
-	Users Users
+	UserRepository UserRepository
 }
 
 func NewRepositories(db *sqlx.DB) *Repositories {
 	return &Repositories{
-		Users: postgres.NewUserRepository(db),
+		UserRepository: postgres.NewUserRepository(db),
 	}
 }

@@ -46,7 +46,9 @@ func Run(configPath string) {
 
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	tokenManager := auth.NewJWTTokenManager(cfg.Auth.JWT.SigningKey)
-	userCache := redis.NewRedisCache(cfg.Redis)
+
+	redisClient := redis.NewRedisClient(cfg.Redis)
+	userCache := redis.NewUserCache(redisClient, cfg.Redis.Expires)
 
 	repositories := repository.NewRepositories(db)
 	services := service.NewServices(service.ServicesDepends{
@@ -56,7 +58,7 @@ func Run(configPath string) {
 		TokenTTL:     cfg.Auth.JWT.TokenTTL,
 		UserCache:    userCache,
 	})
-	handlers := rest.NewHandler(services.Users, tokenManager)
+	handlers := rest.NewHandler(services.UserService, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))
 
 	go func() {
