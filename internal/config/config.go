@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	defaultHttpPort           = "8000"
+	defaultHttpPort           = "8080"
 	defaultHttpRWTimeout      = 10 * time.Second
 	defaultMaxHeaderMegabytes = 1
 	defaultTokenTTL           = 30 * time.Minute
@@ -18,6 +18,7 @@ type (
 		HTTP     HTTPConfig
 		Auth     AuthConfig
 		Postgres PostgresConfig
+		Redis    RedisConfig
 	}
 
 	HTTPConfig struct {
@@ -46,9 +47,18 @@ type (
 		Password string
 		SSLMode  string
 	}
+
+	RedisConfig struct {
+		Host     string
+		Port     string
+		DB       int
+		Password string
+		Expires  time.Duration
+	}
 )
 
 func Init(path string) (*Config, error) {
+	viper.AutomaticEnv()
 	preDefaults()
 
 	if err := parseConfigFile(path); err != nil {
@@ -91,11 +101,15 @@ func parseEnv() error {
 		return err
 	}
 
-	if err := parseLineEnv("http", "host"); err != nil {
+	if err := parseHttpEnv(); err != nil {
 		return err
 	}
 
 	if err := parsePostgresEnv(); err != nil {
+		return err
+	}
+
+	if err := parseRedisEnv(); err != nil {
 		return err
 	}
 
@@ -107,30 +121,49 @@ func parseLineEnv(prefix, name string) error {
 	return viper.BindEnv(name)
 }
 
+func parseHttpEnv() error {
+	if err := viper.BindEnv("http.host", "HTTP_HOST"); err != nil {
+		return err
+	}
+
+	return viper.BindEnv("http.port", "HTTP_PORT")
+}
+
+func parseRedisEnv() error {
+	if err := viper.BindEnv("redis.host", "REDIS_HOST"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("redis.port", "REDIS_PORT"); err != nil {
+		return err
+	}
+
+	return viper.BindEnv("redis.password", "REDIS_PASSWORD")
+}
+
 func parsePostgresEnv() error {
-	viper.SetEnvPrefix("postgres")
 
-	if err := viper.BindEnv("host"); err != nil {
+	if err := viper.BindEnv("postgres.host", "POSTGRES_HOST"); err != nil {
 		return err
 	}
 
-	if err := viper.BindEnv("port"); err != nil {
+	if err := viper.BindEnv("postgres.port", "POSTGRES_PORT"); err != nil {
 		return err
 	}
 
-	if err := viper.BindEnv("db"); err != nil {
+	if err := viper.BindEnv("postgres.db", "POSTGRES_DB"); err != nil {
 		return err
 	}
 
-	if err := viper.BindEnv("user"); err != nil {
+	if err := viper.BindEnv("postgres.user", "POSTGRES_USER"); err != nil {
 		return err
 	}
 
-	if err := viper.BindEnv("password"); err != nil {
+	if err := viper.BindEnv("postgres.password", "POSTGRES_PASSWORD"); err != nil {
 		return err
 	}
 
-	return viper.BindEnv("sslmode")
+	return viper.BindEnv("postgres.sslmode", "POSTGRES_SSLMODE")
 }
 
 // Unmarshal config.yml by keys
@@ -147,6 +180,10 @@ func unmarshalConfig(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("redis", &cfg.Redis); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -154,11 +191,17 @@ func setFromEnv(cfg *Config) {
 	cfg.Auth.PasswordSalt = viper.GetString("salt")
 	cfg.Auth.JWT.SigningKey = viper.GetString("signing_key")
 
-	cfg.HTTP.Host = viper.GetString("host")
+	cfg.HTTP.Host = viper.GetString("http.host")
+	cfg.HTTP.Port = viper.GetString("http.port")
 
-	cfg.Postgres.Host = viper.GetString("host")
-	cfg.Postgres.Port = viper.GetString("port")
-	cfg.Postgres.DB = viper.GetString("db")
-	cfg.Postgres.User = viper.GetString("user")
-	cfg.Postgres.Password = viper.GetString("password")
+	cfg.Postgres.Host = viper.GetString("postgres.host")
+	cfg.Postgres.Port = viper.GetString("postgres.port")
+	cfg.Postgres.DB = viper.GetString("postgres.db")
+	cfg.Postgres.User = viper.GetString("postgres.user")
+	cfg.Postgres.Password = viper.GetString("postgres.password")
+
+	cfg.Redis.Host = viper.GetString("redis.host")
+	cfg.Redis.Port = viper.GetString("redis.port")
+	cfg.Redis.Password = viper.GetString("redis.password")
+	cfg.Redis.Expires = viper.GetDuration("redis.expires")
 }

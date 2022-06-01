@@ -26,7 +26,7 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	var err = h.userService.SignUp(signUpDTO)
+	var err = h.userService.SignUp(c.Request.Context(), signUpDTO)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -42,7 +42,7 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.userService.SignIn(signInDTO)
+	token, err := h.userService.SignIn(c.Request.Context(), signInDTO)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

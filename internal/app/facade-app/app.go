@@ -6,6 +6,7 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/config"
 	"github.com/eugene-krivtsov/idler/internal/repository"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
+	"github.com/eugene-krivtsov/idler/internal/repository/redis"
 	"github.com/eugene-krivtsov/idler/internal/server"
 	"github.com/eugene-krivtsov/idler/internal/service"
 	"github.com/eugene-krivtsov/idler/internal/transport/rest"
@@ -45,6 +46,7 @@ func Run(configPath string) {
 
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	tokenManager := auth.NewJWTTokenManager(cfg.Auth.JWT.SigningKey)
+	userCache := redis.NewRedisCache(cfg.Redis)
 
 	repositories := repository.NewRepositories(db)
 	services := service.NewServices(service.ServicesDepends{
@@ -52,6 +54,7 @@ func Run(configPath string) {
 		Hasher:       hasher,
 		TokenManager: tokenManager,
 		TokenTTL:     cfg.Auth.JWT.TokenTTL,
+		UserCache:    userCache,
 	})
 	handlers := rest.NewHandler(services.Users, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))

@@ -1,6 +1,6 @@
 http:
   host: localhost
-  port: 8000
+  port: 8080
   maxHeaderMegabytes: 1
   readTimeout: 10s
   writeTimeout: 10s
@@ -13,5 +13,11 @@ postgres:
   port: 5432
   dbname: idler
   sslmode: disable
+
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+  expires: 360m
 
 mongo:

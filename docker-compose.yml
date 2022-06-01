@@ -26,12 +26,26 @@ services:
     depends_on:
       - postgres-idler
     volumes:
-      - ./db/changelog.xml:/liquibase/changelog.xml
+      - ./db/:/liquibase/changelog/
+      - ./db/:/liquibase/classpath/
       - ./db/liquibase.properties:/liquibase/liquibase.properties
-      - ./db/changes:/liquibase/changes
     networks:
       idler-net:
         ipv4_address: 172.28.1.2
+
+  redis-idler:
+    container_name: redis-idler
+    image: redis:${REDIS_VERSION}
+    restart: on-failure
+    command: redis-server --include /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis:/usr/local/etc/redis
+      - ./docker-volumes/redis:/data
+    ports:
+      - ${REDIS_PORT}:6379
+    networks:
+      idler-net:
+        ipv4_address: 172.28.1.3
 
 networks:
   idler-net:
