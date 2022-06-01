@@ -1,8 +1,8 @@
 package service
 
 import (
-	"context"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
+	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
@@ -10,8 +10,9 @@ import (
 )
 
 type Users interface {
-	RegisterUser(ctx context.Context, user dto.SignUpDTO) error
-	AuthorizeUser(ctx context.Context, user dto.SignUpDTO) (auth.Token, error)
+	SignUp(user dto.SignUpDTO) error
+	SignIn(user dto.SignInDTO) (auth.Token, error)
+	GetAll() ([]entity.User, error)
 	//GenerateToken(username, password string) (string, error)
 	//ParseToken(token string) (int, error)
 }

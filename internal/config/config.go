@@ -10,14 +10,14 @@ const (
 	defaultHttpPort           = "8000"
 	defaultHttpRWTimeout      = 10 * time.Second
 	defaultMaxHeaderMegabytes = 1
-	defaultAccessTokenTTL     = 30 * time.Minute
-	defaultRefreshTokenTTL    = 24 * time.Hour
+	defaultTokenTTL           = 30 * time.Minute
 )
 
 type (
 	Config struct {
-		HTTP HTTPConfig
-		Auth AuthConfig
+		HTTP     HTTPConfig
+		Auth     AuthConfig
+		Postgres PostgresConfig
 	}
 
 	HTTPConfig struct {
@@ -37,6 +37,15 @@ type (
 		TokenTTL   time.Duration
 		SigningKey string
 	}
+
+	PostgresConfig struct {
+		Host     string
+		Port     string
+		DB       string
+		User     string
+		Password string
+		SSLMode  string
+	}
 )
 
 func Init(path string) (*Config, error) {
@@ -46,10 +55,16 @@ func Init(path string) (*Config, error) {
 		return nil, err
 	}
 
+	if err := parseEnv(); err != nil {
+		return nil, err
+	}
+
 	var cfg Config
 	if err := unmarshalConfig(&cfg); err != nil {
 		return nil, err
 	}
+
+	setFromEnv(&cfg)
 
 	return &cfg, nil
 }
@@ -59,8 +74,7 @@ func preDefaults() {
 	viper.SetDefault("http.max_header_megabytes", defaultMaxHeaderMegabytes)
 	viper.SetDefault("http.timeouts.read", defaultHttpRWTimeout)
 	viper.SetDefault("http.timeouts.write", defaultHttpRWTimeout)
-	viper.SetDefault("http.accessTokenTTL", defaultAccessTokenTTL)
-	viper.SetDefault("auth.refreshTokenTTL", defaultRefreshTokenTTL)
+	viper.SetDefault("auth.tokenTTL", defaultTokenTTL)
 }
 
 func parseConfigFile(filepath string) error {
@@ -72,8 +86,64 @@ func parseConfigFile(filepath string) error {
 	return viper.ReadInConfig()
 }
 
+func parseEnv() error {
+	if err := parseLineEnv("jwt", "signing_key"); err != nil {
+		return err
+	}
+
+	if err := parseLineEnv("http", "host"); err != nil {
+		return err
+	}
+
+	if err := parsePostgresEnv(); err != nil {
+		return err
+	}
+
+	return parseLineEnv("password", "salt")
+}
+
+func parseLineEnv(prefix, name string) error {
+	viper.SetEnvPrefix(prefix)
+	return viper.BindEnv(name)
+}
+
+func parsePostgresEnv() error {
+	viper.SetEnvPrefix("postgres")
+
+	if err := viper.BindEnv("host"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("port"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("db"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("user"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("password"); err != nil {
+		return err
+	}
+
+	return viper.BindEnv("sslmode")
+}
+
+// Unmarshal config.yml by keys
 func unmarshalConfig(cfg *Config) error {
 	if err := viper.UnmarshalKey("http", &cfg.HTTP); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("auth", &cfg.Auth.JWT); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("postgres", &cfg.Postgres); err != nil {
 		return err
 	}
 
@@ -81,5 +151,14 @@ func unmarshalConfig(cfg *Config) error {
 }
 
 func setFromEnv(cfg *Config) {
+	cfg.Auth.PasswordSalt = viper.GetString("salt")
+	cfg.Auth.JWT.SigningKey = viper.GetString("signing_key")
+
 	cfg.HTTP.Host = viper.GetString("host")
+
+	cfg.Postgres.Host = viper.GetString("host")
+	cfg.Postgres.Port = viper.GetString("port")
+	cfg.Postgres.DB = viper.GetString("db")
+	cfg.Postgres.User = viper.GetString("user")
+	cfg.Postgres.Password = viper.GetString("password")
 }

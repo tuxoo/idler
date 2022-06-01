@@ -8,12 +8,11 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
 	"github.com/eugene-krivtsov/idler/internal/server"
 	"github.com/eugene-krivtsov/idler/internal/service"
-	"github.com/eugene-krivtsov/idler/internal/transport/rest/handler"
+	"github.com/eugene-krivtsov/idler/internal/transport/rest"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"os"
 	"os/signal"
 	"syscall"
@@ -35,15 +34,13 @@ func Run(configPath string) {
 		logrus.Fatalf("error initializing configs: %s", err.Error())
 	}
 
-	db, err := postgres.NewPostgresDB(postgres.Config{
-		Port:     viper.GetString("postgres.port"),
-		Username: viper.GetString("postgres.username"),
-		DBName:   viper.GetString("postgres.dbname"),
-		SSLMode:  viper.GetString("postgres.sslmode"),
-		//Host:     os.Getenv("IP_ADDRESS"),
-		Host: "localhost",
-		//Password: os.Getenv("POSTGRES_PASSWORD"),
-		Password: "qwerty",
+	db, err := postgres.NewPostgresDB(config.PostgresConfig{
+		Host:     cfg.Postgres.Host,
+		Port:     cfg.Postgres.Port,
+		DB:       cfg.Postgres.DB,
+		User:     cfg.Postgres.User,
+		Password: cfg.Postgres.Password,
+		SSLMode:  cfg.Postgres.SSLMode,
 	})
 
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
@@ -56,7 +53,7 @@ func Run(configPath string) {
 		TokenManager: tokenManager,
 		TokenTTL:     cfg.Auth.JWT.TokenTTL,
 	})
-	handlers := handler.NewHandler(services.Users)
+	handlers := rest.NewHandler(services.Users, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))
 
 	go func() {

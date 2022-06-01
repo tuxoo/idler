@@ -8,7 +8,8 @@ import (
 
 type Users interface {
 	SaveUser(user entity.User) (int, error)
-	GetUser(name, email, password string) (entity.User, error)
+	GetUser(email, password string) (entity.User, error)
+	GetAll() ([]entity.User, error)
 }
 
 type Repositories struct {

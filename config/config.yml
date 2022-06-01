@@ -1,12 +1,14 @@
 http:
+  host: localhost
   port: 8000
   maxHeaderMegabytes: 1
   readTimeout: 10s
   writeTimeout: 10s
 
+auth:
+  tokenTTL: 180m
+
 postgres:
-  username: idler
-  password: qwerty
   host: localhost
   port: 5432
   dbname: idler

@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository"
@@ -26,7 +25,7 @@ func NewUserService(repository repository.Users, hasher hash.PasswordHasher, tok
 	}
 }
 
-func (s *UserService) RegisterUser(ctx context.Context, dto dto.SignUpDTO) error {
+func (s *UserService) SignUp(dto dto.SignUpDTO) error {
 	user := entity.User{
 		Name:         dto.Name,
 		Email:        dto.Email,
@@ -38,11 +37,15 @@ func (s *UserService) RegisterUser(ctx context.Context, dto dto.SignUpDTO) error
 	return err
 }
 
-func (s *UserService) AuthorizeUser(ctx context.Context, dto dto.SignUpDTO) (auth.Token, error) {
-	user, err := s.repository.GetUser(dto.Name, dto.Email, dto.Password)
+func (s *UserService) SignIn(dto dto.SignInDTO) (auth.Token, error) {
+	user, err := s.repository.GetUser(dto.Email, s.hasher.Hash(dto.Password))
 	if err != nil {
 		return "", err
 	}
 
 	return s.tokenManager.GenerateToken(string(user.Id), s.tokenTTL)
+}
+
+func (s *UserService) GetAll() ([]entity.User, error) {
+	return s.repository.GetAll()
 }

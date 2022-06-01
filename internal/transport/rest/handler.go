@@ -1,18 +1,21 @@
-package handler
+package rest
 
 import (
 	"github.com/eugene-krivtsov/idler/internal/service"
+	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type Handler struct {
-	userService service.Users
+	userService  service.Users
+	tokenManager auth.TokenManager
 }
 
-func NewHandler(userService service.Users) *Handler {
+func NewHandler(userService service.Users, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		userService: userService,
+		userService:  userService,
+		tokenManager: tokenManager,
 	}
 }
 

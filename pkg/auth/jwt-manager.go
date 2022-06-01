@@ -10,6 +10,11 @@ type JWTTokenManager struct {
 	signingKey string
 }
 
+type tokenClaims struct {
+	jwt.StandardClaims
+	UserId int `json:"user_id"`
+}
+
 func NewJWTTokenManager(signingKey string) *JWTTokenManager {
 	return &JWTTokenManager{
 		signingKey: signingKey,
@@ -33,7 +38,6 @@ func (m *JWTTokenManager) ParseToken(accessToken Token) (string, error) {
 		}
 		return []byte(m.signingKey), nil
 	})
-
 	if err != nil {
 		return "", err
 	}
