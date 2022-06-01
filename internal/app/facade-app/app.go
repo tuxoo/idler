@@ -82,4 +82,8 @@ func Run(configPath string) {
 	if err := db.Close(); err != nil {
 		logrus.Errorf("error occured on db connection close: %s", err.Error())
 	}
+
+	if err := redisClient.Close(); err != nil {
+		logrus.Errorf("error occured on redic client close: %s", err.Error())
+	}
 }
