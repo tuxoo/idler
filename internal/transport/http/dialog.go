@@ -11,9 +11,9 @@ func (h *Handler) initDialogRoutes(router *gin.Engine) {
 	chat := router.Group("/dialog", h.userIdentity)
 	{
 		chat.POST("/", h.createDialog)
-		chat.GET("/")
-		chat.GET("/:id")
-		chat.DELETE("/:id")
+		chat.GET("/", h.getAllDialogs)
+		chat.GET("/:id", h.getDialogById)
+		chat.DELETE("/:id", h.deleteDialogById)
 	}
 }
 
@@ -24,6 +24,13 @@ func (h *Handler) createDialog(c *gin.Context) {
 		return
 	}
 
+	var err = h.dialogService.CreateDialog(c, dialogDTO)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
 }
 
 func (h *Handler) getAllDialogs(c *gin.Context) {
@@ -57,7 +64,7 @@ func (h *Handler) getDialogById(c *gin.Context) {
 
 	dialog, err := h.dialogService.GetById(c, id)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusNotFound, err.Error())
 		return
 	}
 

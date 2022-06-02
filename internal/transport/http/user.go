@@ -15,7 +15,7 @@ func (h *Handler) initUserRoutes(router *gin.Engine) {
 		authenticated := user.Group("/", h.userIdentity)
 		{
 			authenticated.GET("/", h.getAllUsers)
-			authenticated.GET("/:mail", h.GetByEmail)
+			authenticated.GET("/:mail", h.getUserByEmail)
 		}
 	}
 }
@@ -70,7 +70,7 @@ func (h *Handler) getAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-func (h *Handler) GetByEmail(c *gin.Context) {
+func (h *Handler) getUserByEmail(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

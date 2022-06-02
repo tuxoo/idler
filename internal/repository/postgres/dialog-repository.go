@@ -27,8 +27,8 @@ func (r *DialogRepository) Save(dialog entity.Dialog) (int, error) {
 
 func (r *DialogRepository) FindAll() ([]entity.Dialog, error) {
 	var dialogs []entity.Dialog
-	query := fmt.Sprintf("SELECT name FROM %s", dialogsTable)
-	if err := r.db.Get(&dialogs, query); err != nil {
+	query := fmt.Sprintf("SELECT name, created_at, last_message, first_user_id, second_user_id FROM %s", dialogsTable)
+	if err := r.db.Select(&dialogs, query); err != nil {
 		return nil, err
 	}
 
@@ -46,7 +46,7 @@ func (r *DialogRepository) FindById(id int) (entity.Dialog, error) {
 }
 
 func (r *DialogRepository) DeleteById(id int) error {
-	query := fmt.Sprintf("U FROM %s where id=$1", dialogsTable)
+	query := fmt.Sprintf("DELETE FROM %s where id=$1", dialogsTable)
 	_, err := r.db.Exec(query, id)
 	return err
 }

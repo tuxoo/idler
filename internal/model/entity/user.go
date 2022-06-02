@@ -4,9 +4,9 @@ import "time"
 
 type User struct {
 	Id           int       `json:"-" db:"id"`
-	Name         string    `json:"name" binding:"required"`
-	Email        string    `json:"email" binding:"required"`
-	Password     string    `json:"password" binding:"required"`
-	RegisteredAt time.Time `json:"registeredAt"`
-	VisitedAt    time.Time `json:"lastVisitAt"`
+	Name         string    `json:"name" db:"name" binding:"required"`
+	Email        string    `json:"email" db:"email" binding:"required"`
+	Password     string    `json:"password" db:"-" binding:"required"`
+	RegisteredAt time.Time `json:"registeredAt" db:"registered_at"`
+	VisitedAt    time.Time `json:"lastVisitAt" db:"visited_at"`
 }

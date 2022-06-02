@@ -37,7 +37,7 @@ func (r *UserRepository) FindByCredentials(email, password string) (entity.User,
 
 func (r *UserRepository) FindAll() ([]entity.User, error) {
 	var users []entity.User
-	query := fmt.Sprintf("SELECT name, email FROM %s", usersTable)
+	query := fmt.Sprintf("SELECT name, email, registered_at, visited_at FROM %s", usersTable)
 	if err := r.db.Select(&users, query); err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (r *UserRepository) FindAll() ([]entity.User, error) {
 
 func (r *UserRepository) FindByEmail(email string) (entity.User, error) {
 	var user entity.User
-	query := fmt.Sprintf("SELECT * FROM %s WHERE email=$1", usersTable)
+	query := fmt.Sprintf("SELECT name, email, registered_at, visited_at FROM %s WHERE email=$1", usersTable)
 	if err := r.db.Get(&user, query, email); err != nil {
 		return user, err
 	}

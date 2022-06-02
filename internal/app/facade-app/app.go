@@ -58,7 +58,7 @@ func Run(configPath string) {
 		TokenTTL:     cfg.Auth.JWT.TokenTTL,
 		UserCache:    userCache,
 	})
-	handlers := http.NewHandler(services.UserService, tokenManager)
+	handlers := http.NewHandler(services.UserService, tokenManager, services.DialogService)
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))
 
 	go func() {

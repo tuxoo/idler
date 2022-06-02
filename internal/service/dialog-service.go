@@ -23,8 +23,9 @@ func (s *DialogService) CreateDialog(ctx context.Context, dto dto.DialogDTO) err
 	dialog := entity.Dialog{
 		Name:         dto.Name,
 		CreatedAt:    time.Now(),
-		FirstUserId:  dto.FirstUserId,
-		SecondUserId: dto.SecondUserId,
+		LastMessage:  time.Now(),
+		FirstUserId:  dto.FirstId,
+		SecondUserId: dto.SecondId,
 	}
 
 	_, err := s.repository.Save(dialog)
@@ -41,5 +42,5 @@ func (s *DialogService) GetById(ctx context.Context, id int) (entity.Dialog, err
 }
 
 func (s *DialogService) RemoveById(ctx context.Context, id int) error {
-	return nil
+	return s.repository.DeleteById(id)
 }

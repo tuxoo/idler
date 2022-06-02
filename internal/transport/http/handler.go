@@ -13,10 +13,11 @@ type Handler struct {
 	dialogService service.Dialogs
 }
 
-func NewHandler(userService service.Users, tokenManager auth.TokenManager) *Handler {
+func NewHandler(userService service.Users, tokenManager auth.TokenManager, dialogService service.Dialogs) *Handler {
 	return &Handler{
-		userService:  userService,
-		tokenManager: tokenManager,
+		userService:   userService,
+		tokenManager:  tokenManager,
+		dialogService: dialogService,
 	}
 }
 
@@ -35,6 +36,7 @@ func (h *Handler) Init(host, port string) *gin.Engine {
 	})
 
 	h.initUserRoutes(router)
+	h.initDialogRoutes(router)
 
 	return router
 }
