@@ -3,5 +3,6 @@
 
 db/liquibase.properties
 FAQ.txt
+main.exe
 
 #.docker-volumes

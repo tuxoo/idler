@@ -38,7 +38,8 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 		VisitedAt:    time.Now(),
 	}
 
-	_, err := s.repository.SaveUser(user)
+	id, err := s.repository.Save(user)
+	user.Id = id
 
 	s.userCache.Set(ctx, dto.Email, &user)
 	return err
@@ -47,7 +48,7 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (auth.Token, error) {
 	var userPointer = s.userCache.Get(ctx, dto.Email)
 	if userPointer == nil {
-		user, err := s.repository.GetUser(dto.Email, s.hasher.Hash(dto.Password))
+		user, err := s.repository.FindByCredentials(dto.Email, s.hasher.Hash(dto.Password))
 		if err != nil {
 			return "", err
 		}
@@ -58,6 +59,10 @@ func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (auth.Token
 	return s.tokenManager.GenerateToken(strconv.Itoa(userPointer.Id), s.tokenTTL)
 }
 
-func (s *UserService) GetAll() ([]entity.User, error) {
-	return s.repository.GetAll()
+func (s *UserService) GetAll(ctx context.Context) ([]entity.User, error) {
+	return s.repository.FindAll()
+}
+
+func (s *UserService) GetByEmail(ctx context.Context, email string) (entity.User, error) {
+	return s.repository.FindByEmail(email)
 }

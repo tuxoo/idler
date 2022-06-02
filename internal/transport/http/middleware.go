@@ -1,10 +1,11 @@
-package rest
+package http
 
 import (
 	"errors"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -28,12 +29,12 @@ func getUserId(c *gin.Context) (int, error) {
 		return 0, errors.New("user id not found")
 	}
 
-	idInt, ok := id.(int)
+	strId, ok := id.(string)
 	if !ok {
 		return 0, errors.New("user id is of invalid type")
 	}
 
-	return idInt, nil
+	return strconv.Atoi(strId)
 }
 
 func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {

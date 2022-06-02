@@ -9,7 +9,7 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/repository/redis"
 	"github.com/eugene-krivtsov/idler/internal/server"
 	"github.com/eugene-krivtsov/idler/internal/service"
-	"github.com/eugene-krivtsov/idler/internal/transport/rest"
+	"github.com/eugene-krivtsov/idler/internal/transport/http"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	_ "github.com/lib/pq"
@@ -58,7 +58,7 @@ func Run(configPath string) {
 		TokenTTL:     cfg.Auth.JWT.TokenTTL,
 		UserCache:    userCache,
 	})
-	handlers := rest.NewHandler(services.UserService, tokenManager)
+	handlers := http.NewHandler(services.UserService, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))
 
 	go func() {

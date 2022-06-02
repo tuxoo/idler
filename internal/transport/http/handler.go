@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"github.com/eugene-krivtsov/idler/internal/service"
@@ -8,8 +8,9 @@ import (
 )
 
 type Handler struct {
-	userService  service.Users
-	tokenManager auth.TokenManager
+	userService   service.Users
+	tokenManager  auth.TokenManager
+	dialogService service.Dialogs
 }
 
 func NewHandler(userService service.Users, tokenManager auth.TokenManager) *Handler {
@@ -33,7 +34,7 @@ func (h *Handler) Init(host, port string) *gin.Engine {
 		context.String(http.StatusOK, "pong")
 	})
 
-	h.initUsersRoutes(router)
+	h.initUserRoutes(router)
 
 	return router
 }
