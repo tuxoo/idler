@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import app "github.com/eugene-krivtsov/idler/internal/app/chat-worker"
+
+const (
+	configPath = "config/config"
+)
 
 func main() {
-	fmt.Println("In this app going to realize logic of messaging by gRPC")
+	app.Run(configPath)
 }

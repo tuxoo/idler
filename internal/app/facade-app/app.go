@@ -67,13 +67,13 @@ func Run(configPath string) {
 		}
 	}()
 
-	logrus.Print("IDLER application has started")
+	logrus.Print("IDLER facade application has started")
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
-	logrus.Print("application shutting down")
+	logrus.Print("IDLER facade application shutting down")
 
 	if err := srv.Shutdown(context.Background()); err != nil {
 		logrus.Errorf("error occured on server shutting down: %s", err.Error())
