@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func SetupHandler(ctx context.Context, poolCache *cache.MemoryCache[string, *Pool]) {
+func SetupHandler(ctx context.Context, poolCache *cache.MemoryCache[string, Pool]) {
 	http.HandleFunc("/ws/", func(w http.ResponseWriter, r *http.Request) {
 		id := r.FormValue("id")
 

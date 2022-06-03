@@ -26,7 +26,7 @@ func Run(configPath string) {
 	//}
 
 	fmt.Println("Go WS")
-	poolCache := cache.NewMemoryCache[string, *ws.Pool]()
+	poolCache := cache.NewMemoryCache[string, ws.Pool]()
 	ws.SetupHandler(context.Background(), poolCache)
 	log.Fatal(http.ListenAndServe(":8081", nil))
 
