@@ -51,7 +51,6 @@ func Run(configPath string) {
 
 	redisClient := redis.NewRedisClient(cfg.Redis)
 	userCache := cache.NewRedisCache[string, entity.User](redisClient, cfg.Redis.Expires)
-	//redis.NewUserCache(redisClient, cfg.Redis.Expires)
 
 	repositories := repository.NewRepositories(db)
 	services := service.NewServices(service.ServicesDepends{
