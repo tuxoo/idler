@@ -6,6 +6,7 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
+	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	"github.com/gin-gonic/gin"
 	"time"
@@ -35,7 +36,7 @@ type ServicesDepends struct {
 	Hasher       hash.PasswordHasher
 	TokenManager auth.TokenManager
 	TokenTTL     time.Duration
-	UserCache    repository.UserCache
+	UserCache    cache.Cache[string, entity.User]
 }
 
 func NewServices(deps ServicesDepends) *Services {

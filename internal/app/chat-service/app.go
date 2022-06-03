@@ -1,8 +1,10 @@
-package chat_worker
+package chat_service
 
 import (
+	"context"
 	"fmt"
-	"github.com/gorilla/websocket"
+	"github.com/eugene-krivtsov/idler/internal/transport/ws"
+	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"log"
 	"net/http"
 )
@@ -24,7 +26,8 @@ func Run(configPath string) {
 	//}
 
 	fmt.Println("Go WS")
-	setupRoutes()
+	poolCache := cache.NewMemoryCache[string, *ws.Pool]()
+	ws.SetupHandler(context.Background(), poolCache)
 	log.Fatal(http.ListenAndServe(":8081", nil))
 
 	//logrus.Print("IDLER chat-worker application has started")
@@ -34,49 +37,4 @@ func Run(configPath string) {
 	//<-quit
 	//
 	//logrus.Print("IDLER facade application shutting down")
-}
-
-func setupRoutes() {
-	http.HandleFunc("/", func(w http.ResponseWriter, request *http.Request) {
-		fmt.Fprintf(w, "Simple Server")
-	})
-	http.HandleFunc("/ws", serveWS)
-}
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
-func reader(conn *websocket.Conn) {
-	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		log.Println(string(p))
-
-		if err := conn.WriteMessage(messageType, p); err != nil {
-			log.Println(err)
-			return
-		}
-
-	}
-}
-
-func serveWS(w http.ResponseWriter, r *http.Request) {
-	upgrader.CheckOrigin = func(r *http.Request) bool {
-		return true
-	}
-
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-	}
-
-	log.Println("Client has Successfully Connected")
-
-	reader(ws)
 }

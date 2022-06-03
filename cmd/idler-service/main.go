@@ -1,6 +1,6 @@
 package main
 
-import app "github.com/eugene-krivtsov/idler/internal/app/facade-app"
+import app "github.com/eugene-krivtsov/idler/internal/app/idler-service"
 
 const (
 	configPath = "config/config"

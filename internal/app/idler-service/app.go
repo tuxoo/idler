@@ -1,9 +1,10 @@
-package facade_app
+package idler_service
 
 import (
 	"context"
 	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/config"
+	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
 	"github.com/eugene-krivtsov/idler/internal/repository/redis"
@@ -11,6 +12,7 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/service"
 	"github.com/eugene-krivtsov/idler/internal/transport/http"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
+	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -48,7 +50,8 @@ func Run(configPath string) {
 	tokenManager := auth.NewJWTTokenManager(cfg.Auth.JWT.SigningKey)
 
 	redisClient := redis.NewRedisClient(cfg.Redis)
-	userCache := redis.NewUserCache(redisClient, cfg.Redis.Expires)
+	userCache := cache.NewRedisCache[string, entity.User](redisClient, cfg.Redis.Expires)
+	//redis.NewUserCache(redisClient, cfg.Redis.Expires)
 
 	repositories := repository.NewRepositories(db)
 	services := service.NewServices(service.ServicesDepends{

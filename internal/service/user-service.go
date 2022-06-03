@@ -6,6 +6,7 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
+	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	"strconv"
 	"time"
@@ -16,10 +17,10 @@ type UserService struct {
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 	tokenTTL     time.Duration
-	userCache    repository.UserCache
+	userCache    cache.Cache[string, entity.User]
 }
 
-func NewUserService(repository repository.UserRepository, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache repository.UserCache) *UserService {
+func NewUserService(repository repository.UserRepository, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache cache.Cache[string, entity.User]) *UserService {
 	return &UserService{
 		repository:   repository,
 		hasher:       hasher,
@@ -46,7 +47,11 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 }
 
 func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (auth.Token, error) {
-	var userPointer = s.userCache.Get(ctx, dto.Email)
+	var userPointer, err = s.userCache.Get(ctx, dto.Email)
+	if err != nil {
+		return "", err
+	}
+
 	if userPointer == nil {
 		user, err := s.repository.FindByCredentials(dto.Email, s.hasher.Hash(dto.Password))
 		if err != nil {
