@@ -17,7 +17,7 @@ func SetupHandler(ctx context.Context, poolCache *cache.MemoryCache[string, Pool
 		if err != nil {
 			pool = NewPool(id, true)
 			poolCache.Set(ctx, id, pool)
-			go pool.Start()
+			go pool.Start(ctx, poolCache)
 		}
 
 		serveWs(pool, w, r)

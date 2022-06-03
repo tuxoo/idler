@@ -34,3 +34,17 @@ func (c *MemoryCache[K, V]) Get(ctx context.Context, key K) (*V, error) {
 
 	return &value, nil
 }
+
+func (c *MemoryCache[K, V]) Delete(ctx context.Context, key K) {
+	c.Lock()
+	delete(c.cache, key)
+	c.Unlock()
+}
+
+func (c *MemoryCache[K, V]) Size(ctx context.Context) int {
+	c.RLock()
+	size := len(c.cache)
+	c.RUnlock()
+
+	return size
+}

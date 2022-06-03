@@ -1,7 +1,9 @@
 package ws
 
 import (
+	"context"
 	"fmt"
+	"github.com/eugene-krivtsov/idler/pkg/cache"
 )
 
 const (
@@ -28,14 +30,13 @@ func NewPool(id string, isDialog bool) *Pool {
 	}
 }
 
-func (p *Pool) Start() {
+func (p *Pool) Start(ctx context.Context, poolCache *cache.MemoryCache[string, Pool]) {
 	for {
 		select {
 		case client := <-p.Register:
 			p.Clients[client] = true
 			fmt.Println("Size of Connection Pool: ", len(p.Clients))
 			for client, _ := range p.Clients {
-				fmt.Println(client)
 				client.Conn.WriteJSON(Message{Type: 1, Body: "New User Joined..."})
 			}
 			break
@@ -44,8 +45,10 @@ func (p *Pool) Start() {
 			fmt.Println("Size of Connection Pool: ", len(p.Clients))
 
 			if len(p.Clients) == 0 {
-				p.Stop(p.ID)
+				poolCache.Delete(ctx, p.ID)
 			}
+
+			fmt.Println(poolCache.Size(ctx))
 
 			for client, _ := range p.Clients {
 				client.Conn.WriteJSON(Message{Type: 1, Body: "User Disconnected..."})
@@ -61,8 +64,4 @@ func (p *Pool) Start() {
 			}
 		}
 	}
-}
-
-func (p *Pool) Stop(id string) {
-	//delete(Pools, id)
 }
