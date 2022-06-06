@@ -1,19 +1,18 @@
-package repository
+package postgres
 
 import (
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
 	"github.com/jmoiron/sqlx"
 )
 
-type UserRepository interface {
+type Users interface {
 	Save(user entity.User) (int, error)
 	FindByCredentials(email, password string) (entity.User, error)
 	FindAll() ([]entity.User, error)
 	FindByEmail(email string) (entity.User, error)
 }
 
-type DialogRepository interface {
+type Dialogs interface {
 	Save(dialog entity.Dialog) (int, error)
 	FindAll() ([]entity.Dialog, error)
 	FindById(id int) (entity.Dialog, error)
@@ -21,13 +20,13 @@ type DialogRepository interface {
 }
 
 type Repositories struct {
-	UserRepository   UserRepository
-	DialogRepository DialogRepository
+	Users   Users
+	Dialogs Dialogs
 }
 
 func NewRepositories(db *sqlx.DB) *Repositories {
 	return &Repositories{
-		UserRepository:   postgres.NewUserRepository(db),
-		DialogRepository: postgres.NewDialogRepository(db),
+		Users:   NewUserRepository(db),
+		Dialogs: NewDialogRepository(db),
 	}
 }

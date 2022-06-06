@@ -4,16 +4,16 @@ import (
 	"context"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	"github.com/eugene-krivtsov/idler/internal/repository"
+	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
 	"github.com/gin-gonic/gin"
 	"time"
 )
 
 type DialogService struct {
-	repository repository.DialogRepository
+	repository postgres.Dialogs
 }
 
-func NewDialogService(repository repository.DialogRepository) *DialogService {
+func NewDialogService(repository postgres.Dialogs) *DialogService {
 	return &DialogService{
 		repository: repository,
 	}

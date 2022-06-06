@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/config"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	"github.com/eugene-krivtsov/idler/internal/repository"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
 	"github.com/eugene-krivtsov/idler/internal/repository/redis"
 	"github.com/eugene-krivtsov/idler/internal/server"
@@ -52,7 +51,7 @@ func Run(configPath string) {
 	redisClient := redis.NewRedisClient(cfg.Redis)
 	userCache := cache.NewRedisCache[string, entity.User](redisClient, cfg.Redis.Expires)
 
-	repositories := repository.NewRepositories(db)
+	repositories := postgres.NewRepositories(db)
 	services := service.NewServices(service.ServicesDepends{
 		Repositories: repositories,
 		Hasher:       hasher,

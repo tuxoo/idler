@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	"github.com/eugene-krivtsov/idler/internal/repository"
+	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
@@ -32,7 +32,7 @@ type Services struct {
 }
 
 type ServicesDepends struct {
-	Repositories *repository.Repositories
+	Repositories *postgres.Repositories
 	Hasher       hash.PasswordHasher
 	TokenManager auth.TokenManager
 	TokenTTL     time.Duration
@@ -40,8 +40,8 @@ type ServicesDepends struct {
 }
 
 func NewServices(deps ServicesDepends) *Services {
-	userService := NewUserService(deps.Repositories.UserRepository, deps.Hasher, deps.TokenManager, deps.TokenTTL, deps.UserCache)
-	dialogService := NewDialogService(deps.Repositories.DialogRepository)
+	userService := NewUserService(deps.Repositories.Users, deps.Hasher, deps.TokenManager, deps.TokenTTL, deps.UserCache)
+	dialogService := NewDialogService(deps.Repositories.Dialogs)
 
 	return &Services{
 		UserService:   userService,

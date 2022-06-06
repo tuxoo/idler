@@ -27,7 +27,10 @@ func NewClient(conn *websocket.Conn, pool *Pool) *Client {
 func (c *Client) Read() {
 	defer func() {
 		c.Pool.Unregister <- c
-		c.Conn.Close()
+		err := c.Conn.Close()
+		if err != nil {
+			return
+		}
 	}()
 
 	for {
