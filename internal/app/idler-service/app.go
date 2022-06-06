@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/config"
-	"github.com/eugene-krivtsov/idler/internal/model/entity"
+	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
 	"github.com/eugene-krivtsov/idler/internal/repository/redis"
 	"github.com/eugene-krivtsov/idler/internal/server"
@@ -49,7 +49,7 @@ func Run(configPath string) {
 	tokenManager := auth.NewJWTTokenManager(cfg.Auth.JWT.SigningKey)
 
 	redisClient := redis.NewRedisClient(cfg.Redis)
-	userCache := cache.NewRedisCache[string, entity.User](redisClient, cfg.Redis.Expires)
+	userCache := cache.NewRedisCache[string, dto.UserDTO](redisClient, cfg.Redis.Expires)
 
 	repositories := postgres.NewRepositories(db)
 	services := service.NewServices(service.ServicesDepends{
@@ -59,7 +59,7 @@ func Run(configPath string) {
 		TokenTTL:     cfg.Auth.JWT.TokenTTL,
 		UserCache:    userCache,
 	})
-	handlers := http.NewHandler(services.UserService, tokenManager, services.DialogService)
+	handlers := http.NewHandler(services.UserService, tokenManager, services.ConversationService)
 	srv := server.NewServer(cfg, handlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))
 
 	go func() {

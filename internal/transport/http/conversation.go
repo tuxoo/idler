@@ -7,24 +7,30 @@ import (
 	"strconv"
 )
 
-func (h *Handler) initDialogRoutes(router *gin.Engine) {
-	chat := router.Group("/dialog", h.userIdentity)
+func (h *Handler) initConversationRoutes(router *gin.Engine) {
+	chat := router.Group("/conversation", h.userIdentity)
 	{
-		chat.POST("/", h.createDialog)
-		chat.GET("/", h.getAllDialogs)
-		chat.GET("/:id", h.getDialogById)
-		chat.DELETE("/:id", h.deleteDialogById)
+		chat.POST("/", h.createConversation)
+		chat.GET("/", h.getAllConversations)
+		chat.GET("/:id", h.getConversationById)
+		chat.DELETE("/:id", h.deleteConversationById)
 	}
 }
 
-func (h *Handler) createDialog(c *gin.Context) {
-	var dialogDTO dto.DialogDTO
-	if err := c.BindJSON(&dialogDTO); err != nil {
+func (h *Handler) createConversation(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	var conversationDTO dto.ConversationDTO
+	if err := c.BindJSON(&conversationDTO); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
-	var err = h.dialogService.CreateDialog(c, dialogDTO)
+	err = h.dialogService.CreateConversation(c, id, conversationDTO)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -33,7 +39,7 @@ func (h *Handler) createDialog(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-func (h *Handler) getAllDialogs(c *gin.Context) {
+func (h *Handler) getAllConversations(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -49,7 +55,7 @@ func (h *Handler) getAllDialogs(c *gin.Context) {
 	c.JSON(http.StatusOK, dialogs)
 }
 
-func (h *Handler) getDialogById(c *gin.Context) {
+func (h *Handler) getConversationById(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -71,7 +77,7 @@ func (h *Handler) getDialogById(c *gin.Context) {
 	c.JSON(http.StatusOK, dialog)
 }
 
-func (h *Handler) deleteDialogById(c *gin.Context) {
+func (h *Handler) deleteConversationById(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

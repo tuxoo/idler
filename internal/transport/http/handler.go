@@ -10,10 +10,10 @@ import (
 type Handler struct {
 	userService   service.Users
 	tokenManager  auth.TokenManager
-	dialogService service.Dialogs
+	dialogService service.Conversations
 }
 
-func NewHandler(userService service.Users, tokenManager auth.TokenManager, dialogService service.Dialogs) *Handler {
+func NewHandler(userService service.Users, tokenManager auth.TokenManager, dialogService service.Conversations) *Handler {
 	return &Handler{
 		userService:   userService,
 		tokenManager:  tokenManager,
@@ -36,7 +36,7 @@ func (h *Handler) Init(host, port string) *gin.Engine {
 	})
 
 	h.initUserRoutes(router)
-	h.initDialogRoutes(router)
+	h.initConversationRoutes(router)
 
 	return router
 }

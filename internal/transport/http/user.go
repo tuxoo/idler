@@ -14,10 +14,27 @@ func (h *Handler) initUserRoutes(router *gin.Engine) {
 
 		authenticated := user.Group("/", h.userIdentity)
 		{
+			authenticated.GET("/profile", h.getCurrentUser)
 			authenticated.GET("/", h.getAllUsers)
-			authenticated.GET("/:mail", h.getUserByEmail)
+			authenticated.GET("/:email", h.getUserByEmail)
 		}
 	}
+}
+
+func (h *Handler) getCurrentUser(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	user, err := h.userService.GetById(c, id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }
 
 func (h *Handler) signUp(c *gin.Context) {

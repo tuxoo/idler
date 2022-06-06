@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	driverName   = "postgres"
-	usersTable   = "users"
-	dialogsTable = "dialogs"
+	driverName        = "postgres"
+	userTable         = "\"user\""
+	conversationTable = "conversation"
 )
 
 func NewPostgresDB(cfg config.PostgresConfig) (*sqlx.DB, error) {

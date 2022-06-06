@@ -17,10 +17,10 @@ type UserService struct {
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 	tokenTTL     time.Duration
-	userCache    cache.Cache[string, entity.User]
+	userCache    cache.Cache[string, dto.UserDTO]
 }
 
-func NewUserService(repository postgres.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache cache.Cache[string, entity.User]) *UserService {
+func NewUserService(repository postgres.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache cache.Cache[string, dto.UserDTO]) *UserService {
 	return &UserService{
 		repository:   repository,
 		hasher:       hasher,
@@ -39,35 +39,37 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 		VisitedAt:    time.Now(),
 	}
 
-	id, err := s.repository.Save(user)
-	user.Id = id
-
-	s.userCache.Set(ctx, dto.Email, &user)
+	newUser, err := s.repository.Save(user)
+	s.userCache.Set(ctx, dto.Email, newUser)
 	return err
 }
 
 func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (auth.Token, error) {
-	var userPointer, err = s.userCache.Get(ctx, dto.Email)
+	var user, err = s.userCache.Get(ctx, dto.Email)
 	if err != nil {
 		return "", err
 	}
 
-	if userPointer == nil {
+	if user == nil {
 		user, err := s.repository.FindByCredentials(dto.Email, s.hasher.Hash(dto.Password))
 		if err != nil {
 			return "", err
 		}
 
-		s.userCache.Set(ctx, dto.Email, &user)
+		s.userCache.Set(ctx, dto.Email, user)
 		return s.tokenManager.GenerateToken(strconv.Itoa(user.Id), s.tokenTTL)
 	}
-	return s.tokenManager.GenerateToken(strconv.Itoa(userPointer.Id), s.tokenTTL)
+	return s.tokenManager.GenerateToken(strconv.Itoa(user.Id), s.tokenTTL)
 }
 
-func (s *UserService) GetAll(ctx context.Context) ([]entity.User, error) {
+func (s *UserService) GetById(ctx context.Context, id int) (*dto.UserDTO, error) {
+	return s.repository.FindById(id)
+}
+
+func (s *UserService) GetAll(ctx context.Context) ([]dto.UserDTO, error) {
 	return s.repository.FindAll()
 }
 
-func (s *UserService) GetByEmail(ctx context.Context, email string) (entity.User, error) {
+func (s *UserService) GetByEmail(ctx context.Context, email string) (*dto.UserDTO, error) {
 	return s.repository.FindByEmail(email)
 }
