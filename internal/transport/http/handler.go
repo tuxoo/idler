@@ -1,9 +1,14 @@
 package http
 
 import (
+	"fmt"
+	"github.com/eugene-krivtsov/idler/docs"
+	"github.com/eugene-krivtsov/idler/internal/config"
 	"github.com/eugene-krivtsov/idler/internal/service"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"net/http"
 )
 
@@ -21,15 +26,15 @@ func NewHandler(userService service.Users, tokenManager auth.TokenManager, dialo
 	}
 }
 
-func (h *Handler) Init(host, port string) *gin.Engine {
+func (h *Handler) Init(cfg config.HTTPConfig) *gin.Engine {
 	router := gin.Default()
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
 	)
 
-	//docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", host, port) // TODO:
-	//router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // TODO:
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.GET("/ping", func(context *gin.Context) {
 		context.String(http.StatusOK, "pong")

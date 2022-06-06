@@ -21,22 +21,18 @@ func (h *Handler) initUserRoutes(router *gin.Engine) {
 	}
 }
 
-func (h *Handler) getCurrentUser(c *gin.Context) {
-	id, err := getUserId(c)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	user, err := h.userService.GetById(c, id)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, user)
-}
-
+// @Summary      User SignUp
+// @Tags         user-auth
+// @Description  registering new user
+// @ID           userSignUp
+// @Accept       json
+// @Produce      json
+// @Param        input    body      dto.SignUpDTO  true  "sign up info"
+// @Success      201      {string}  string         "ok"
+// @Failure      400,404  {object}  errorResponse
+// @Failure      500      {object}  errorResponse
+// @Failure      default  {object}  errorResponse
+// @Router       /user/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
 	var signUpDTO dto.SignUpDTO
 	if err := c.BindJSON(&signUpDTO); err != nil {
@@ -69,6 +65,22 @@ func (h *Handler) signIn(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]any{
 		"token": token,
 	})
+}
+
+func (h *Handler) getCurrentUser(c *gin.Context) {
+	id, err := getUserId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	user, err := h.userService.GetById(c, id)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }
 
 func (h *Handler) getAllUsers(c *gin.Context) {

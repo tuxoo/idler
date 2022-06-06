@@ -24,6 +24,19 @@ import (
 	"syscall"
 )
 
+// @title        Idler Application
+// @version      1.0
+// @description  API Server for keep in touch
+
+// @host      localhost:8080
+// @BasePath  /
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        Authorization
+
+// Run initializes whole application
+
 func Run(configPath string) {
 	fmt.Println(`
  ================================================
@@ -70,7 +83,7 @@ func Run(configPath string) {
 		UserCache:            userCache,
 	})
 	httpHandlers := http.NewHandler(services.UserService, tokenManager, services.ConversationService)
-	httpServer := server.NewHTTPServer(cfg, httpHandlers.Init(cfg.HTTP.Host, cfg.HTTP.Port))
+	httpServer := server.NewHTTPServer(cfg, httpHandlers.Init(cfg.HTTP))
 
 	go func() {
 		if err := httpServer.Run(); err != nil {
