@@ -19,6 +19,8 @@ type (
 		Auth     AuthConfig
 		Postgres PostgresConfig
 		Redis    RedisConfig
+		Mongo    MongoConfig
+		WS       WSConfig
 	}
 
 	HTTPConfig struct {
@@ -54,6 +56,20 @@ type (
 		DB       int
 		Password string
 		Expires  time.Duration
+	}
+
+	WSConfig struct {
+		Port            string
+		ReadBufferSize  int
+		WriteBufferSize int
+	}
+
+	MongoConfig struct {
+		Host     string
+		Port     string
+		User     string
+		Password string
+		DB       string `mapstructure:"db"`
 	}
 )
 
@@ -113,7 +129,39 @@ func parseEnv() error {
 		return err
 	}
 
-	return parseLineEnv("password", "salt")
+	if err := parseMongoEnv(); err != nil {
+		return err
+	}
+
+	if err := parseLineEnv("password", "salt"); err != nil {
+		return err
+	}
+
+	if err := parseLineEnv("websocket.port", "WEBSOCKET_PORT"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func parseMongoEnv() error {
+	if err := viper.BindEnv("mongo.host", "MONGO_HOST"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("mongo.port", "MONGO_PORT"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("mongo.db", "MONGO_DB"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("mongo.user", "MONGO_INITDB_ROOT_USERNAME"); err != nil {
+		return err
+	}
+
+	return viper.BindEnv("mongo.password", "MONGO_INITDB_ROOT_PASSWORD")
 }
 
 func parseLineEnv(prefix, name string) error {
@@ -184,6 +232,14 @@ func unmarshalConfig(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("mongo", &cfg.Mongo); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("websocket", &cfg.WS); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -204,4 +260,12 @@ func setFromEnv(cfg *Config) {
 	cfg.Redis.Port = viper.GetString("redis.port")
 	cfg.Redis.Password = viper.GetString("redis.password")
 	cfg.Redis.Expires = viper.GetDuration("redis.expires")
+
+	cfg.WS.Port = viper.GetString("websocket.port")
+
+	cfg.Mongo.Host = viper.GetString("mongo.host")
+	cfg.Mongo.Port = viper.GetString("mongo.port")
+	cfg.Mongo.User = viper.GetString("mongo.user")
+	cfg.Mongo.Password = viper.GetString("mongo.password")
+	cfg.Mongo.DB = viper.GetString("mongo.db")
 }

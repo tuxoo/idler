@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
+	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
@@ -13,14 +13,14 @@ import (
 )
 
 type UserService struct {
-	repository   postgres.Users
+	repository   postgres_repositrory.Users
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 	tokenTTL     time.Duration
 	userCache    cache.Cache[string, dto.UserDTO]
 }
 
-func NewUserService(repository postgres.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache cache.Cache[string, dto.UserDTO]) *UserService {
+func NewUserService(repository postgres_repositrory.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache cache.Cache[string, dto.UserDTO]) *UserService {
 	return &UserService{
 		repository:   repository,
 		hasher:       hasher,

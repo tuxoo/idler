@@ -4,15 +4,15 @@ import (
 	"context"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
+	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
 	"github.com/gin-gonic/gin"
 )
 
 type ConversationService struct {
-	repository postgres.Conversations
+	repository postgres_repositrory.Conversations
 }
 
-func NewConversationService(repository postgres.Conversations) *ConversationService {
+func NewConversationService(repository postgres_repositrory.Conversations) *ConversationService {
 	return &ConversationService{
 		repository: repository,
 	}

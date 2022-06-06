@@ -1,9 +1,14 @@
-package postgres
+package postgres_repositrory
 
 import (
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/jmoiron/sqlx"
+)
+
+const (
+	userTable         = "\"user\""
+	conversationTable = "conversation"
 )
 
 type Users interface {

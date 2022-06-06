@@ -1,50 +1,62 @@
 package ws
 
 import (
-	"fmt"
+	"context"
+	"github.com/eugene-krivtsov/idler/internal/model/entity"
+	"github.com/eugene-krivtsov/idler/internal/service"
 	"github.com/gorilla/websocket"
-	"log"
+	"github.com/sirupsen/logrus"
+	"time"
 )
 
 type Client struct {
-	ID   string
-	Conn *websocket.Conn
-	Pool *Pool
+	hub            *Hub
+	conn           *websocket.Conn
+	send           chan entity.Message
+	messageService service.Messages
 }
 
-type Message struct {
-	Type int    `json:"type"`
-	Body string `json:"body"`
-}
-
-func NewClient(conn *websocket.Conn, pool *Pool) *Client {
-	return &Client{
-		Conn: conn,
-		Pool: pool,
+func NewClient(conn *websocket.Conn, hub *Hub, messageService service.Messages) *Client {
+	client := &Client{
+		hub:            hub,
+		conn:           conn,
+		send:           make(chan entity.Message),
+		messageService: messageService,
 	}
+	client.hub.register <- client
+
+	return client
 }
 
-func (c *Client) Read() {
+func (c *Client) HandleMessage() {
 	defer func() {
-		c.Pool.Unregister <- c
-		err := c.Conn.Close()
-		if err != nil {
+		c.hub.unregister <- c
+		if err := c.conn.Close(); err != nil {
+			logrus.Errorf("error occured on web socket client close: %s", err.Error())
 			return
 		}
 	}()
 
 	for {
-		messageType, p, err := c.Conn.ReadMessage()
+		_, p, err := c.conn.ReadMessage()
 		if err != nil {
-			log.Println(err)
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				logrus.Errorf("unexpected error occured on web socket client close: %s", err.Error())
+				return
+			}
+		}
+
+		message := entity.Message{
+			Sender: "a",
+			SentAt: time.Now(),
+			Text:   string(p),
+		}
+
+		c.hub.broadcast <- message
+
+		if err := c.messageService.Save(context.Background(), message); err != nil {
+			logrus.Errorf("error occured on web socket sending message: %s", err.Error())
 			return
 		}
-		message := Message{Type: messageType, Body: string(p)}
-		c.Pool.Send <- message
-		fmt.Printf("Message Received: %+v\n", message)
 	}
-}
-
-func (c *Client) Delete(pool *Pool, client *Client) {
-	delete(pool.Clients, client)
 }

@@ -3,7 +3,9 @@ package service
 import (
 	"context"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
-	"github.com/eugene-krivtsov/idler/internal/repository/postgres"
+	"github.com/eugene-krivtsov/idler/internal/model/entity"
+	mongo_repository "github.com/eugene-krivtsov/idler/internal/repository/mongo-repository"
+	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
@@ -26,25 +28,33 @@ type Conversations interface {
 	RemoveById(ctx context.Context, id int) error
 }
 
+type Messages interface {
+	Save(ctx context.Context, message entity.Message) error
+}
+
 type Services struct {
 	UserService         Users
 	ConversationService Conversations
+	MessageService      Messages
 }
 
 type ServicesDepends struct {
-	Repositories *postgres.Repositories
-	Hasher       hash.PasswordHasher
-	TokenManager auth.TokenManager
-	TokenTTL     time.Duration
-	UserCache    cache.Cache[string, dto.UserDTO]
+	PostgresRepositories *postgres_repositrory.Repositories
+	MongoRepositories    *mongo_repository.Repositories
+	Hasher               hash.PasswordHasher
+	TokenManager         auth.TokenManager
+	TokenTTL             time.Duration
+	UserCache            cache.Cache[string, dto.UserDTO]
 }
 
 func NewServices(deps ServicesDepends) *Services {
-	userService := NewUserService(deps.Repositories.Users, deps.Hasher, deps.TokenManager, deps.TokenTTL, deps.UserCache)
-	conversationService := NewConversationService(deps.Repositories.Conversations)
+	userService := NewUserService(deps.PostgresRepositories.Users, deps.Hasher, deps.TokenManager, deps.TokenTTL, deps.UserCache)
+	conversationService := NewConversationService(deps.PostgresRepositories.Conversations)
+	messageService := NewMessageService(deps.MongoRepositories.Messages)
 
 	return &Services{
 		UserService:         userService,
 		ConversationService: conversationService,
+		MessageService:      messageService,
 	}
 }

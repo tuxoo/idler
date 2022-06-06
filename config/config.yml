@@ -20,4 +20,12 @@ redis:
   db: 0
   expires: 360m
 
+websocket:
+  port: 8000
+  readBufferSize: 1024
+  writeBufferSize: 1024
+
 mongo:
+  host: localhost
+  port: 27017
+  dbname: idler
