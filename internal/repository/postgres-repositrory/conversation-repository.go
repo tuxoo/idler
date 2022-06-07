@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
+	. "github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -39,7 +40,7 @@ func (r *ConversationRepository) FindAll() ([]dto.ConversationDTO, error) {
 	return conversations, nil
 }
 
-func (r *ConversationRepository) FindById(id int) (*dto.ConversationDTO, error) {
+func (r *ConversationRepository) FindById(id UUID) (*dto.ConversationDTO, error) {
 	var conversation dto.ConversationDTO
 	query := fmt.Sprintf("SELECT name, owner FROM %s WHERE id=$1", conversationTable)
 
@@ -51,7 +52,7 @@ func (r *ConversationRepository) FindById(id int) (*dto.ConversationDTO, error) 
 	return &conversation, nil
 }
 
-func (r *ConversationRepository) DeleteById(id int) error {
+func (r *ConversationRepository) DeleteById(id UUID) error {
 	query := fmt.Sprintf("DELETE FROM %s where id=$1", conversationTable)
 	_, err := r.db.Exec(query, id)
 	return err

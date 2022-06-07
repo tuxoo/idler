@@ -6,6 +6,7 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
 	"github.com/gin-gonic/gin"
+	. "github.com/google/uuid"
 )
 
 type ConversationService struct {
@@ -34,10 +35,10 @@ func (s *ConversationService) GetAll(c *gin.Context) ([]dto.ConversationDTO, err
 	return s.repository.FindAll()
 }
 
-func (s *ConversationService) GetById(ctx context.Context, id int) (*dto.ConversationDTO, error) {
+func (s *ConversationService) GetById(ctx context.Context, id UUID) (*dto.ConversationDTO, error) {
 	return s.repository.FindById(id)
 }
 
-func (s *ConversationService) RemoveById(ctx context.Context, id int) error {
+func (s *ConversationService) RemoveById(ctx context.Context, id UUID) error {
 	return s.repository.DeleteById(id)
 }

@@ -3,6 +3,7 @@ package postgres_repositrory
 import (
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
+	. "github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -22,8 +23,8 @@ type Users interface {
 type Conversations interface {
 	Save(conversation entity.Conversation) (*dto.ConversationDTO, error)
 	FindAll() ([]dto.ConversationDTO, error)
-	FindById(id int) (*dto.ConversationDTO, error)
-	DeleteById(id int) error
+	FindById(id UUID) (*dto.ConversationDTO, error)
+	DeleteById(id UUID) error
 }
 
 type Repositories struct {

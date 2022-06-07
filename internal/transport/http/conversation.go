@@ -1,10 +1,11 @@
 package http
 
 import (
+	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
-	"strconv"
 )
 
 func (h *Handler) initConversationRoutes(api *gin.RouterGroup) {
@@ -52,7 +53,9 @@ func (h *Handler) getAllConversations(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dialogs)
+	if dialogs != nil {
+		c.JSON(http.StatusOK, dialogs)
+	}
 }
 
 func (h *Handler) getConversationById(c *gin.Context) {
@@ -62,15 +65,17 @@ func (h *Handler) getConversationById(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		errorMessage := fmt.Sprintf("Illegal format of ID [%s]", id)
+		newErrorResponse(c, http.StatusBadRequest, errorMessage)
 		return
 	}
 
 	dialog, err := h.dialogService.GetById(c, id)
-	if err != nil {
-		newErrorResponse(c, http.StatusNotFound, err.Error())
+	if err != nil && err.Error() == "sql: no rows in result set" {
+		errorMessage := fmt.Sprintf("Conversation not found by ID [%s]", id)
+		newErrorResponse(c, http.StatusNotFound, errorMessage)
 		return
 	}
 
@@ -84,9 +89,10 @@ func (h *Handler) deleteConversationById(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		errorMessage := fmt.Sprintf("Illegal format of ID [%s]", id)
+		newErrorResponse(c, http.StatusBadRequest, errorMessage)
 		return
 	}
 

@@ -10,6 +10,7 @@ import (
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	"github.com/gin-gonic/gin"
+	. "github.com/google/uuid"
 	"time"
 )
 
@@ -24,8 +25,8 @@ type Users interface {
 type Conversations interface {
 	CreateConversation(ctx context.Context, userId int, conversation dto.ConversationDTO) error
 	GetAll(c *gin.Context) ([]dto.ConversationDTO, error)
-	GetById(ctx context.Context, id int) (*dto.ConversationDTO, error)
-	RemoveById(ctx context.Context, id int) error
+	GetById(ctx context.Context, id UUID) (*dto.ConversationDTO, error)
+	RemoveById(ctx context.Context, id UUID) error
 }
 
 type Messages interface {
