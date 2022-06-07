@@ -34,7 +34,7 @@ func (h *Handler) Init(cfg config.HTTPConfig) *gin.Engine {
 	router := gin.Default()
 
 	corsConfig := cors.Config{
-		AllowAllOrigins:  true,
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 		AllowCredentials: false,
