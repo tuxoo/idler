@@ -3,18 +3,21 @@ package ws
 import (
 	"github.com/eugene-krivtsov/idler/internal/config"
 	"github.com/eugene-krivtsov/idler/internal/service"
+	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/gin-gonic/gin"
+	. "github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"net/http"
 )
 
 type Handler struct {
-	Hub            *Hub
-	Upgrader       *websocket.Upgrader
-	MessageService service.Messages
+	HubCache            cache.Cache[UUID, Pool]
+	Upgrader            *websocket.Upgrader
+	MessageService      service.Messages
+	ConversationService service.Conversations
 }
 
-func NewHandler(cfg config.WSConfig, hub *Hub, messageService service.Messages) *Handler {
+func NewHandler(cfg config.WSConfig, hubCache cache.Cache[UUID, Pool], messageService service.Messages, conversationService service.Conversations) *Handler {
 	upgrader := &websocket.Upgrader{
 		ReadBufferSize:  cfg.ReadBufferSize,
 		WriteBufferSize: cfg.ReadBufferSize,
@@ -23,24 +26,39 @@ func NewHandler(cfg config.WSConfig, hub *Hub, messageService service.Messages) 
 		},
 	}
 	return &Handler{
-		Hub:            hub,
-		Upgrader:       upgrader,
-		MessageService: messageService,
+		Upgrader:            upgrader,
+		HubCache:            hubCache,
+		MessageService:      messageService,
+		ConversationService: conversationService,
 	}
 }
 
-func (h *Handler) Init() http.Handler {
+func (h *Handler) InitWSConversations() http.Handler {
 	handler := gin.New()
-
-	handler.GET("/conversation", func(c *gin.Context) {
-		conn, err := h.Upgrader.Upgrade(c.Writer, c.Request, nil)
-		if err != nil {
-			return
-		}
-
-		client := NewClient(conn, h.Hub, h.MessageService)
-		client.HandleMessage()
-	})
+	handler.GET("/conversation", h.CreateWSConversation)
 
 	return handler
+}
+
+func (h *Handler) CreateWSConversation(c *gin.Context) {
+	params := c.Request.URL.Query()
+
+	id, err := Parse(params.Get("id"))
+	if _, err := h.ConversationService.GetById(c, id); err != nil {
+		return
+	}
+
+	conn, err := h.Upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		return
+	}
+
+	pool, err := h.HubCache.Get(c.Request.Context(), id)
+	if err != nil && err.Error() == "value not found" {
+		h.HubCache.Set(c.Request.Context(), id, NewPool(id))
+		pool.Run()
+	}
+
+	client := NewClient(conn, pool, h.MessageService)
+	client.HandleMessage()
 }

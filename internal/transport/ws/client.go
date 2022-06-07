@@ -10,27 +10,27 @@ import (
 )
 
 type Client struct {
-	hub            *Hub
+	pool           *Pool
 	conn           *websocket.Conn
 	send           chan entity.Message
 	messageService service.Messages
 }
 
-func NewClient(conn *websocket.Conn, hub *Hub, messageService service.Messages) *Client {
+func NewClient(conn *websocket.Conn, pool *Pool, messageService service.Messages) *Client {
 	client := &Client{
-		hub:            hub,
+		pool:           pool,
 		conn:           conn,
 		send:           make(chan entity.Message),
 		messageService: messageService,
 	}
-	client.hub.register <- client
+	client.pool.register <- client
 
 	return client
 }
 
 func (c *Client) HandleMessage() {
 	defer func() {
-		c.hub.unregister <- c
+		c.pool.unregister <- c
 		if err := c.conn.Close(); err != nil {
 			logrus.Errorf("error occured on web socket client close: %s", err.Error())
 			return
@@ -52,7 +52,7 @@ func (c *Client) HandleMessage() {
 			Text:   string(p),
 		}
 
-		c.hub.broadcast <- message
+		c.pool.broadcast <- message
 
 		if err := c.messageService.Save(context.Background(), message); err != nil {
 			logrus.Errorf("error occured on web socket sending message: %s", err.Error())

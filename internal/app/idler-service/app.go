@@ -17,6 +17,7 @@ import (
 	"github.com/eugene-krivtsov/idler/pkg/db/mongo"
 	"github.com/eugene-krivtsov/idler/pkg/db/postgres"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
+	. "github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -91,17 +92,15 @@ func Run(configPath string) {
 		}
 	}()
 
-	hub := ws.NewHub()
-	wsHandler := ws.NewHandler(cfg.WS, hub, services.MessageService)
-	wsServer := server.NewWSServer(cfg, wsHandler.Init(), hub)
+	poolCache := cache.NewMemoryCache[UUID, ws.Pool]()
+	wsHandler := ws.NewHandler(cfg.WS, poolCache, services.MessageService, services.ConversationService).InitWSConversations()
+	wsServer := server.NewWSServer(cfg, wsHandler)
 
 	go func() {
 		if err := wsServer.Run(); err != nil {
 			logrus.Errorf("error occurred while running web socket server: %s\n", err.Error())
 		}
 	}()
-
-	hub.Run()
 
 	logrus.Print("IDLER facade application has started")
 

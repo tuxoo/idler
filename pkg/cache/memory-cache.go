@@ -29,7 +29,7 @@ func (c *MemoryCache[K, V]) Get(ctx context.Context, key K) (*V, error) {
 	c.RUnlock()
 
 	if !exist {
-		return &value, errors.New("not found")
+		return &value, errors.New("value not found")
 	}
 
 	return &value, nil

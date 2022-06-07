@@ -4,20 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/config"
-	"github.com/eugene-krivtsov/idler/internal/transport/ws"
-	"github.com/gorilla/websocket"
 	"net/http"
 )
 
 type WSServer struct {
-	upgrader *websocket.Upgrader
-
-	wsHandler *http.Handler
-	wsServer  *http.Server
-	hub       *ws.Hub
+	wsServer *http.Server
 }
 
-func NewWSServer(cfg *config.Config, wsHandler http.Handler, hub *ws.Hub) *WSServer {
+func NewWSServer(cfg *config.Config, wsHandler http.Handler) *WSServer {
 	wsServer := &http.Server{
 		Addr:    fmt.Sprintf(":%s", cfg.WS.Port),
 		Handler: wsHandler,
@@ -25,7 +19,6 @@ func NewWSServer(cfg *config.Config, wsHandler http.Handler, hub *ws.Hub) *WSSer
 
 	return &WSServer{
 		wsServer: wsServer,
-		hub:      hub,
 	}
 }
 

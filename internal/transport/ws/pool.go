@@ -3,17 +3,20 @@ package ws
 import (
 	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
+	. "github.com/google/uuid"
 )
 
-type Hub struct {
+type Pool struct {
+	id         UUID
 	clients    map[*Client]bool
 	broadcast  chan entity.Message
 	register   chan *Client
 	unregister chan *Client
 }
 
-func NewHub() *Hub {
-	return &Hub{
+func NewPool(id UUID) *Pool {
+	return &Pool{
+		id:         id,
 		broadcast:  make(chan entity.Message),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
@@ -21,7 +24,7 @@ func NewHub() *Hub {
 	}
 }
 
-func (h *Hub) Run() {
+func (h *Pool) Run() {
 	for {
 		select {
 		case client := <-h.register:
@@ -42,6 +45,6 @@ func (h *Hub) Run() {
 	}
 }
 
-func (h *Hub) Send(msg entity.Message) {
+func (h *Pool) Send(msg entity.Message) {
 	h.broadcast <- msg
 }
