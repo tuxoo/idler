@@ -25,7 +25,6 @@ func (m *JWTTokenManager) GenerateToken(userId string, ttl time.Duration) (Token
 	return Token(str), err
 }
 
-// TODO:
 func (m *JWTTokenManager) ParseToken(accessToken Token) (string, error) {
 	token, err := jwt.Parse(string(accessToken), func(token *jwt.Token) (i interface{}, err error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

@@ -5,10 +5,6 @@ import (
 	"fmt"
 )
 
-type PasswordHasher interface {
-	Hash(password string) string
-}
-
 // SHA1Hasher uses SHA1 to hash passwords with provided salt
 type SHA1Hasher struct {
 	salt string
