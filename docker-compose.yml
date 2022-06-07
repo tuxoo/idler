@@ -50,10 +50,11 @@ services:
   mongo-idler:
     container_name: mongo-idler
     image: mongo:${MONGO_VERSION}
-#    restart: on-failure
+    restart: on-failure
     env_file:
       - .env
     volumes:
+      - ./mongo:/data/configdb
       - ./docker-volumes/mongo:/data/db
     ports:
       - ${MONGO_PORT}:27017

@@ -27,9 +27,9 @@ func (h *Handler) initUserRoutes(router *gin.Engine) {
 // @ID           userSignUp
 // @Accept       json
 // @Produce      json
-// @Param        input    body      dto.SignUpDTO  true  "sign up info"
+// @Param        input    body      dto.SignUpDTO  true  "account information"
 // @Success      201      {string}  string         "ok"
-// @Failure      400,404  {object}  errorResponse
+// @Failure      400  	  {object}  errorResponse
 // @Failure      500      {object}  errorResponse
 // @Failure      default  {object}  errorResponse
 // @Router       /user/sign-up [post]
@@ -49,6 +49,18 @@ func (h *Handler) signUp(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
+// @Summary User SignIn
+// @Tags user-auth
+// @Description authentication new user
+// @ID userSignIn
+// @Accept  json
+// @Produce  json
+// @Param input body dto.SignInDTO true "credentials"
+// @Success 200 {string} string "token"
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /user/sign-in [post]
 func (h *Handler) signIn(c *gin.Context) {
 	var signInDTO dto.SignInDTO
 	if err := c.BindJSON(&signInDTO); err != nil {
@@ -67,6 +79,16 @@ func (h *Handler) signIn(c *gin.Context) {
 	})
 }
 
+// @Summary User Profile
+// @Tags user
+// @Description get current profile user
+// @ID user
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} dto.UserDTO
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /user/profile [get]
 func (h *Handler) getCurrentUser(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {

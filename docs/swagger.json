@@ -9,9 +9,45 @@
     "host": "localhost:8080",
     "basePath": "/",
     "paths": {
-        "/user/sign-up": {
+        "/user/profile": {
+            "get": {
+                "description": "get current profile user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "User Profile",
+                "operationId": "user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/sign-in": {
             "post": {
-                "description": "registering new user",
+                "description": "authentication new user",
                 "consumes": [
                     "application/json"
                 ],
@@ -21,22 +57,22 @@
                 "tags": [
                     "user-auth"
                 ],
-                "summary": "User SignUp",
-                "operationId": "userSignUp",
+                "summary": "User SignIn",
+                "operationId": "userSignIn",
                 "parameters": [
                     {
-                        "description": "sign up info",
+                        "description": "credentials",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.SignUpDTO"
+                            "$ref": "#/definitions/dto.SignInDTO"
                         }
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "ok",
+                    "200": {
+                        "description": "token",
                         "schema": {
                             "type": "string"
                         }
@@ -67,9 +103,80 @@
                     }
                 }
             }
+        },
+        "/user/sign-up": {
+            "post": {
+                "description": "registering new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user-auth"
+                ],
+                "summary": "User SignUp",
+                "operationId": "userSignUp",
+                "parameters": [
+                    {
+                        "description": "account information",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SignUpDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/http.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/http.errorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "dto.SignInDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 6
+                }
+            }
+        },
         "dto.SignUpDTO": {
             "type": "object",
             "required": [
@@ -91,6 +198,24 @@
                     "type": "string",
                     "maxLength": 64,
                     "minLength": 6
+                }
+            }
+        },
+        "dto.UserDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
