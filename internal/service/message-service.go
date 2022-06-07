@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository/mongo-repository"
+	. "github.com/google/uuid"
 )
 
 type MessageService struct {
@@ -16,6 +17,18 @@ func NewMessageService(repository mongo_repository.Messages) *MessageService {
 	}
 }
 
-func (s *MessageService) Save(ctx context.Context, message entity.Message) error {
+func (s *MessageService) Create(ctx context.Context, message entity.Message) error {
 	return s.repository.Save(ctx, message)
+}
+
+func (s *MessageService) CreateAll(ctx context.Context, messages []entity.Message) error {
+	return s.repository.SaveAll(ctx, messages)
+}
+
+func (s *MessageService) GetByConversationId(ctx context.Context, id UUID) (entity.Message, error) {
+	return s.repository.FindByConversationId(ctx, id)
+}
+
+func (s *MessageService) GetAllConversationId(ctx context.Context, id UUID) ([]entity.Message, error) {
+	return s.repository.FindAllByConversationId(ctx, id)
 }

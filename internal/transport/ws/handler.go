@@ -61,5 +61,5 @@ func (h *Handler) CreateWSConversation(c *gin.Context) {
 	}
 
 	client := NewClient(params.Get("user"), conn, pool, h.MessageService)
-	go client.HandleMessage()
+	go client.HandleMessage(c.Request.Context())
 }

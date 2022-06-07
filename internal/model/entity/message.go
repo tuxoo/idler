@@ -1,9 +1,12 @@
 package entity
 
-import "time"
+import (
+	"time"
+)
 
 type Message struct {
-	Sender string
-	SentAt time.Time
-	Text   string
+	ConversationId string    `bson:"conversationId"`
+	Sender         string    `bson:"sender"`
+	SentAt         time.Time `bson:"sentAt"`
+	Text           string    `bson:"text"`
 }

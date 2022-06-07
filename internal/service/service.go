@@ -30,7 +30,10 @@ type Conversations interface {
 }
 
 type Messages interface {
-	Save(ctx context.Context, message entity.Message) error
+	Create(ctx context.Context, message entity.Message) error
+	CreateAll(ctx context.Context, messages []entity.Message) error
+	GetByConversationId(ctx context.Context, id UUID) (entity.Message, error)
+	GetAllConversationId(ctx context.Context, id UUID) ([]entity.Message, error)
 }
 
 type Services struct {

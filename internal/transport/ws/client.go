@@ -30,7 +30,7 @@ func NewClient(user string, conn *websocket.Conn, pool *Pool, messageService ser
 	return client
 }
 
-func (c *Client) HandleMessage() {
+func (c *Client) HandleMessage(ctx context.Context) {
 	defer func() {
 		c.pool.unregister <- c
 		if err := c.conn.Close(); err != nil {
@@ -49,14 +49,15 @@ func (c *Client) HandleMessage() {
 		}
 
 		message := entity.Message{
-			Sender: c.user,
-			SentAt: time.Now(),
-			Text:   string(p),
+			ConversationId: c.pool.id.String(),
+			Sender:         c.user,
+			SentAt:         time.Now(),
+			Text:           string(p),
 		}
 
 		c.pool.Send(message)
 
-		if err := c.messageService.Save(context.Background(), message); err != nil {
+		if err := c.messageService.Create(context.Background(), message); err != nil {
 			logrus.Errorf("error occured on web socket sending message: %s", err.Error())
 			return
 		}
