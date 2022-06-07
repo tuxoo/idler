@@ -18,6 +18,19 @@ func (h *Handler) initConversationRoutes(api *gin.RouterGroup) {
 	}
 }
 
+// @Summary 	Create Conversation
+// @Security 	ApiKeyAuth
+// @Tags		conversation
+// @Description	creating new conversation
+// @ID			createConversation
+// @Accept		json
+// @Produce		json
+// @Param       input    body      	dto.ConversationDTO  true  "conversation information"
+// @Success     201
+// @Failure		400		{object}  	errorResponse
+// @Failure     500		{object}  	errorResponse
+// @Failure     default	{object}  	errorResponse
+// @Router      /conversation 		[post]
 func (h *Handler) createConversation(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
@@ -31,7 +44,7 @@ func (h *Handler) createConversation(c *gin.Context) {
 		return
 	}
 
-	err = h.dialogService.CreateConversation(c, id, conversationDTO)
+	err = h.conversationService.CreateConversation(c, id, conversationDTO)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -40,6 +53,17 @@ func (h *Handler) createConversation(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
+// @Summary 	Get Conversations
+// @Security 	ApiKeyAuth
+// @Tags 		conversation
+// @Description gets all conversations
+// @ID 			allConversations
+// @Accept  	json
+// @Produce  	json
+// @Success 	200 	{array}		dto.ConversationDTO
+// @Failure 	500 	{object} 	errorResponse
+// @Failure 	default {object} 	errorResponse
+// @Router 		/conversation 		[get]
 func (h *Handler) getAllConversations(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
@@ -47,17 +71,29 @@ func (h *Handler) getAllConversations(c *gin.Context) {
 		return
 	}
 
-	dialogs, err := h.dialogService.GetAll(c)
+	conversations, err := h.conversationService.GetAll(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if dialogs != nil {
-		c.JSON(http.StatusOK, dialogs)
+	if conversations != nil {
+		c.JSON(http.StatusOK, conversations)
 	}
 }
 
+// @Summary 	GET Conversation By ID
+// @Security 	ApiKeyAuth
+// @Tags 		conversation
+// @Description gets conversation by ID
+// @ID 			getConversationById
+// @Accept  	json
+// @Produce  	json
+// @Param id path string true "Conversation ID"
+// @Success 	200 	{object} 	dto.ConversationDTO
+// @Failure 	500 	{object} 	errorResponse
+// @Failure 	default {object} 	errorResponse
+// @Router 		/conversation/{id} 	[get]
 func (h *Handler) getConversationById(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
@@ -72,16 +108,28 @@ func (h *Handler) getConversationById(c *gin.Context) {
 		return
 	}
 
-	dialog, err := h.dialogService.GetById(c, id)
+	conversation, err := h.conversationService.GetById(c, id)
 	if err != nil && err.Error() == "sql: no rows in result set" {
 		errorMessage := fmt.Sprintf("Conversation not found by ID [%s]", id)
 		newErrorResponse(c, http.StatusNotFound, errorMessage)
 		return
 	}
 
-	c.JSON(http.StatusOK, dialog)
+	c.JSON(http.StatusOK, conversation)
 }
 
+// @Summary 	Delete Conversation By ID
+// @Security 	ApiKeyAuth
+// @Tags 		conversation
+// @Description deletes conversation by ID
+// @ID 			deleteConversationById
+// @Accept  	json
+// @Produce  	json
+// @Param id path string true "Conversation ID"
+// @Success 	204
+// @Failure 	500 {object} 		errorResponse
+// @Failure 	default {object} 	errorResponse
+// @Router 		/conversation/{id}	[delete]
 func (h *Handler) deleteConversationById(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
@@ -96,7 +144,7 @@ func (h *Handler) deleteConversationById(c *gin.Context) {
 		return
 	}
 
-	if err := h.dialogService.RemoveById(c, id); err != nil {
+	if err := h.conversationService.RemoveById(c, id); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

@@ -1,5 +1,14 @@
 basePath: /api/v1
 definitions:
+  dto.ConversationDTO:
+    properties:
+      name:
+        type: string
+      owner:
+        type: integer
+    required:
+    - name
+    type: object
   dto.SignInDTO:
     properties:
       email:
@@ -64,6 +73,129 @@ info:
   title: Idler Application
   version: "1.0"
 paths:
+  /conversation:
+    get:
+      consumes:
+      - application/json
+      description: gets all conversations
+      operationId: allConversations
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ConversationDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Conversations
+      tags:
+      - conversation
+    post:
+      consumes:
+      - application/json
+      description: creating new conversation
+      operationId: createConversation
+      parameters:
+      - description: conversation information
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ConversationDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Conversation
+      tags:
+      - conversation
+  /conversation/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: deletes conversation by ID
+      operationId: deleteConversationById
+      parameters:
+      - description: Conversation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Conversation By ID
+      tags:
+      - conversation
+    get:
+      consumes:
+      - application/json
+      description: gets conversation by ID
+      operationId: getConversationById
+      parameters:
+      - description: Conversation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ConversationDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/http.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: GET Conversation By ID
+      tags:
+      - conversation
   /user:
     get:
       consumes:

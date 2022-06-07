@@ -21,18 +21,18 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 	}
 }
 
-// @Summary      User SignUp
-// @Tags         user-auth
-// @Description  registering new user
-// @ID           userSignUp
-// @Accept       json
-// @Produce      json
-// @Param        input    body      dto.SignUpDTO  true  "account information"
-// @Success      201
-// @Failure      400  	  {object}  errorResponse
-// @Failure      500      {object}  errorResponse
-// @Failure      default  {object}  errorResponse
-// @Router       /user/sign-up [post]
+// @Summary		User SignUp
+// @Tags        user-auth
+// @Description registering new user
+// @ID          userSignUp
+// @Accept      json
+// @Produce     json
+// @Param       input body dto.SignUpDTO  true  "account information"
+// @Success     201
+// @Failure     400  	  		{object}  errorResponse
+// @Failure     500      		{object}  errorResponse
+// @Failure     default  		{object}  errorResponse
+// @Router      /user/sign-up 	[post]
 func (h *Handler) signUp(c *gin.Context) {
 	var signUpDTO dto.SignUpDTO
 	if err := c.BindJSON(&signUpDTO); err != nil {
@@ -49,18 +49,18 @@ func (h *Handler) signUp(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-// @Summary User SignIn
-// @Tags user-auth
+// @Summary 	User SignIn
+// @Tags 		user-auth
 // @Description authentication new user
-// @ID userSignIn
-// @Accept  json
-// @Produce  json
+// @ID 			userSignIn
+// @Accept  	json
+// @Produce  	json
 // @Param input body dto.SignInDTO true "credentials"
-// @Success 200 {string} string "token"
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
-// @Router /user/sign-in [post]
+// @Success 	200 {string} string "token"
+// @Failure 	400,404 {object} 	errorResponse
+// @Failure 	500 {object} 		errorResponse
+// @Failure 	default {object} 	errorResponse
+// @Router 		/user/sign-in 		[post]
 func (h *Handler) signIn(c *gin.Context) {
 	var signInDTO dto.SignInDTO
 	if err := c.BindJSON(&signInDTO); err != nil {
@@ -79,17 +79,17 @@ func (h *Handler) signIn(c *gin.Context) {
 	})
 }
 
-// @Summary User Profile
-// @Security ApiKeyAuth
-// @Tags user
+// @Summary 	User Profile
+// @Security 	ApiKeyAuth
+// @Tags 		user
 // @Description gets current profile user
-// @ID currentUser
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} dto.UserDTO
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
-// @Router /user/profile [get]
+// @ID 			currentUser
+// @Accept  	json
+// @Produce  	json
+// @Success 	200 {object} 		dto.UserDTO
+// @Failure 	500 {object} 		errorResponse
+// @Failure 	default {object} 	errorResponse
+// @Router 		/user/profile 		[get]
 func (h *Handler) getCurrentUser(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
@@ -106,17 +106,17 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// @Summary Users
-// @Security ApiKeyAuth
-// @Tags user
+// @Summary 	Users
+// @Security 	ApiKeyAuth
+// @Tags 		user
 // @Description gets all users
-// @ID allUsers
-// @Accept  json
-// @Produce  json
-// @Success 200 {array} dto.UserDTO
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
-// @Router /user [get]
+// @ID 			allUsers
+// @Accept  	json
+// @Produce  	json
+// @Success 	200 {array} 		dto.UserDTO
+// @Failure 	500 {object} 		errorResponse
+// @Failure 	default {object} 	errorResponse
+// @Router 		/user 				[get]
 func (h *Handler) getAllUsers(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {

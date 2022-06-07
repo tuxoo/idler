@@ -14,16 +14,16 @@ import (
 )
 
 type Handler struct {
-	userService   service.Users
-	tokenManager  auth.TokenManager
-	dialogService service.Conversations
+	userService         service.Users
+	tokenManager        auth.TokenManager
+	conversationService service.Conversations
 }
 
 func NewHandler(userService service.Users, tokenManager auth.TokenManager, dialogService service.Conversations) *Handler {
 	return &Handler{
-		userService:   userService,
-		tokenManager:  tokenManager,
-		dialogService: dialogService,
+		userService:         userService,
+		tokenManager:        tokenManager,
+		conversationService: dialogService,
 	}
 }
 
