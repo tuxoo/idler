@@ -10,14 +10,16 @@ import (
 )
 
 type Client struct {
+	user           string
 	pool           *Pool
 	conn           *websocket.Conn
 	send           chan entity.Message
 	messageService service.Messages
 }
 
-func NewClient(conn *websocket.Conn, pool *Pool, messageService service.Messages) *Client {
+func NewClient(user string, conn *websocket.Conn, pool *Pool, messageService service.Messages) *Client {
 	client := &Client{
+		user:           user,
 		pool:           pool,
 		conn:           conn,
 		send:           make(chan entity.Message),

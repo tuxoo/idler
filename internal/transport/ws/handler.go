@@ -59,6 +59,6 @@ func (h *Handler) CreateWSConversation(c *gin.Context) {
 		pool.Run()
 	}
 
-	client := NewClient(conn, pool, h.MessageService)
+	client := NewClient(params.Get("user"), conn, pool, h.MessageService)
 	client.HandleMessage()
 }
