@@ -82,7 +82,7 @@ func (h *Handler) signIn(c *gin.Context) {
 // @Summary User Profile
 // @Security ApiKeyAuth
 // @Tags user
-// @Description get current profile user
+// @Description gets current profile user
 // @ID currentUser
 // @Accept  json
 // @Produce  json
@@ -106,6 +106,17 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// @Summary Users
+// @Security ApiKeyAuth
+// @Tags user
+// @Description gets all users
+// @ID allUsers
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} dto.UserDTO
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /user [get]
 func (h *Handler) getAllUsers(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
@@ -125,7 +136,7 @@ func (h *Handler) getAllUsers(c *gin.Context) {
 // @Summary User By Email
 // @Security ApiKeyAuth
 // @Tags user
-// @Description get user by email
+// @Description gets user by email
 // @ID userByEmail
 // @Accept  json
 // @Produce  json
