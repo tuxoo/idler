@@ -55,10 +55,11 @@ func (h *Handler) CreateWSConversation(c *gin.Context) {
 
 	pool, err := h.HubCache.Get(c.Request.Context(), id)
 	if err != nil && err.Error() == "value not found" {
-		h.HubCache.Set(c.Request.Context(), id, NewPool(id))
-		pool.Run()
+		pool = NewPool(id)
+		h.HubCache.Set(c.Request.Context(), id, pool)
+		go pool.Run()
 	}
 
 	client := NewClient(params.Get("user"), conn, pool, h.MessageService)
-	client.HandleMessage()
+	go client.HandleMessage()
 }

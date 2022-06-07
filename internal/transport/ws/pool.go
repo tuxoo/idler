@@ -36,6 +36,10 @@ func (h *Pool) Run() {
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {
+				if client.user == message.Sender {
+					continue
+				}
+
 				if err := client.conn.WriteJSON(message); err != nil {
 					fmt.Println(err)
 					return

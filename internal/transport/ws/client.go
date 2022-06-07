@@ -49,12 +49,12 @@ func (c *Client) HandleMessage() {
 		}
 
 		message := entity.Message{
-			Sender: "a",
+			Sender: c.user,
 			SentAt: time.Now(),
 			Text:   string(p),
 		}
 
-		c.pool.broadcast <- message
+		c.pool.Send(message)
 
 		if err := c.messageService.Save(context.Background(), message); err != nil {
 			logrus.Errorf("error occured on web socket sending message: %s", err.Error())
