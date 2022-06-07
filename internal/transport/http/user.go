@@ -80,7 +80,7 @@ func (h *Handler) signIn(c *gin.Context) {
 }
 
 // @Summary 	User Profile
-// @Security 	ApiKeyAuth
+// @Security 	Bearer
 // @Tags 		user
 // @Description gets current profile user
 // @ID 			currentUser
@@ -107,7 +107,7 @@ func (h *Handler) getCurrentUser(c *gin.Context) {
 }
 
 // @Summary 	Users
-// @Security 	ApiKeyAuth
+// @Security 	Bearer
 // @Tags 		user
 // @Description gets all users
 // @ID 			allUsers
@@ -134,7 +134,7 @@ func (h *Handler) getAllUsers(c *gin.Context) {
 }
 
 // @Summary User By Email
-// @Security ApiKeyAuth
+// @Security Bearer
 // @Tags user
 // @Description gets user by email
 // @ID userByEmail

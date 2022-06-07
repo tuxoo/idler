@@ -11,7 +11,10 @@ import (
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"net/http"
+	"time"
 )
+
+const ()
 
 type Handler struct {
 	userService         service.Users
@@ -29,10 +32,19 @@ func NewHandler(userService service.Users, tokenManager auth.TokenManager, dialo
 
 func (h *Handler) Init(cfg config.HTTPConfig) *gin.Engine {
 	router := gin.Default()
+
+	corsConfig := cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}
+
 	router.Use(
 		gin.Recovery(),
 		gin.Logger(),
-		cors.Default(),
+		cors.New(corsConfig),
 	)
 
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)

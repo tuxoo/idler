@@ -19,7 +19,7 @@ func (h *Handler) initConversationRoutes(api *gin.RouterGroup) {
 }
 
 // @Summary 	Create Conversation
-// @Security 	ApiKeyAuth
+// @Security 	Bearer
 // @Tags		conversation
 // @Description	creating new conversation
 // @ID			createConversation
@@ -54,7 +54,7 @@ func (h *Handler) createConversation(c *gin.Context) {
 }
 
 // @Summary 	Get Conversations
-// @Security 	ApiKeyAuth
+// @Security 	Bearer
 // @Tags 		conversation
 // @Description gets all conversations
 // @ID 			allConversations
@@ -83,7 +83,7 @@ func (h *Handler) getAllConversations(c *gin.Context) {
 }
 
 // @Summary 	GET Conversation By ID
-// @Security 	ApiKeyAuth
+// @Security 	Bearer
 // @Tags 		conversation
 // @Description gets conversation by ID
 // @ID 			getConversationById
@@ -119,7 +119,7 @@ func (h *Handler) getConversationById(c *gin.Context) {
 }
 
 // @Summary 	Delete Conversation By ID
-// @Security 	ApiKeyAuth
+// @Security 	Bearer
 // @Tags 		conversation
 // @Description deletes conversation by ID
 // @ID 			deleteConversationById

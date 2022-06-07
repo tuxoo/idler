@@ -97,7 +97,7 @@ paths:
           schema:
             $ref: '#/definitions/http.errorResponse'
       security:
-      - ApiKeyAuth: []
+      - Bearer: []
       summary: Get Conversations
       tags:
       - conversation
@@ -131,7 +131,7 @@ paths:
           schema:
             $ref: '#/definitions/http.errorResponse'
       security:
-      - ApiKeyAuth: []
+      - Bearer: []
       summary: Create Conversation
       tags:
       - conversation
@@ -161,7 +161,7 @@ paths:
           schema:
             $ref: '#/definitions/http.errorResponse'
       security:
-      - ApiKeyAuth: []
+      - Bearer: []
       summary: Delete Conversation By ID
       tags:
       - conversation
@@ -192,7 +192,7 @@ paths:
           schema:
             $ref: '#/definitions/http.errorResponse'
       security:
-      - ApiKeyAuth: []
+      - Bearer: []
       summary: GET Conversation By ID
       tags:
       - conversation
@@ -220,7 +220,7 @@ paths:
           schema:
             $ref: '#/definitions/http.errorResponse'
       security:
-      - ApiKeyAuth: []
+      - Bearer: []
       summary: Users
       tags:
       - user
@@ -252,7 +252,7 @@ paths:
           schema:
             $ref: '#/definitions/http.errorResponse'
       security:
-      - ApiKeyAuth: []
+      - Bearer: []
       summary: User By Email
       tags:
       - user
@@ -278,7 +278,7 @@ paths:
           schema:
             $ref: '#/definitions/http.errorResponse'
       security:
-      - ApiKeyAuth: []
+      - Bearer: []
       summary: User Profile
       tags:
       - user
@@ -355,7 +355,7 @@ paths:
       tags:
       - user-auth
 securityDefinitions:
-  ApiKeyAuth:
+  Bearer:
     in: header
     name: Authorization
     type: apiKey
