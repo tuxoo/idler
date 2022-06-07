@@ -7,8 +7,8 @@ import (
 	"strconv"
 )
 
-func (h *Handler) initConversationRoutes(router *gin.Engine) {
-	chat := router.Group("/conversation", h.userIdentity)
+func (h *Handler) initConversationRoutes(api *gin.RouterGroup) {
+	chat := api.Group("/conversation", h.userIdentity)
 	{
 		chat.POST("/", h.createConversation)
 		chat.GET("/", h.getAllConversations)

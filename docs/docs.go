@@ -18,6 +18,11 @@ const docTemplate = `{
     "paths": {
         "/user/profile": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get current profile user",
                 "consumes": [
                     "application/json"
@@ -29,7 +34,7 @@ const docTemplate = `{
                     "user"
                 ],
                 "summary": "User Profile",
-                "operationId": "user",
+                "operationId": "currentUser",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -138,15 +143,62 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "description": ""
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/http.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/http.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{email}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get user by email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "User By Email",
+                "operationId": "userByEmail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserDTO"
                         }
                     },
                     "500": {
@@ -175,12 +227,14 @@ const docTemplate = `{
             "properties": {
                 "email": {
                     "type": "string",
-                    "maxLength": 64
+                    "maxLength": 64,
+                    "example": "kill-77@mail.ru"
                 },
                 "password": {
                     "type": "string",
                     "maxLength": 64,
-                    "minLength": 6
+                    "minLength": 6,
+                    "example": "qwerty"
                 }
             }
         },
@@ -194,17 +248,20 @@ const docTemplate = `{
             "properties": {
                 "email": {
                     "type": "string",
-                    "maxLength": 64
+                    "maxLength": 64,
+                    "example": "kill-77@mail.ru"
                 },
                 "name": {
                     "type": "string",
                     "maxLength": 64,
-                    "minLength": 2
+                    "minLength": 2,
+                    "example": "alex"
                 },
                 "password": {
                     "type": "string",
                     "maxLength": 64,
-                    "minLength": 6
+                    "minLength": 6,
+                    "example": "qwerty"
                 }
             }
         },
@@ -248,7 +305,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
-	BasePath:         "/",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Idler Application",
 	Description:      "API Server for keep in touch",

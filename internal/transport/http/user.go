@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-func (h *Handler) initUserRoutes(router *gin.Engine) {
-	user := router.Group("/user")
+func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
+	user := api.Group("/user")
 	{
 		user.POST("/sign-up", h.signUp)
 		user.POST("/sign-in", h.signIn)
@@ -28,7 +28,7 @@ func (h *Handler) initUserRoutes(router *gin.Engine) {
 // @Accept       json
 // @Produce      json
 // @Param        input    body      dto.SignUpDTO  true  "account information"
-// @Success      201      {string}  string         "ok"
+// @Success      201
 // @Failure      400  	  {object}  errorResponse
 // @Failure      500      {object}  errorResponse
 // @Failure      default  {object}  errorResponse
@@ -80,9 +80,10 @@ func (h *Handler) signIn(c *gin.Context) {
 }
 
 // @Summary User Profile
+// @Security ApiKeyAuth
 // @Tags user
 // @Description get current profile user
-// @ID user
+// @ID currentUser
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} dto.UserDTO
@@ -121,6 +122,18 @@ func (h *Handler) getAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+// @Summary User By Email
+// @Security ApiKeyAuth
+// @Tags user
+// @Description get user by email
+// @ID userByEmail
+// @Accept  json
+// @Produce  json
+// @Param email path string true "User email"
+// @Success 200 {object} dto.UserDTO
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /user/{email} [get]
 func (h *Handler) getUserByEmail(c *gin.Context) {
 	_, err := getUserId(c)
 	if err != nil {
