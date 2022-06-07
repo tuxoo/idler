@@ -55,7 +55,7 @@ services:
       - .env
     volumes:
       - ./mongo:/data/configdb
-      - ./docker-volumes/mongo:/data/db
+      - ./.docker-volumes/mongo:/data/db
     ports:
       - ${MONGO_PORT}:27017
     networks:
