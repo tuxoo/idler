@@ -28,3 +28,12 @@ MONGO_INITDB_ROOT_PASSWORD=[your mongo password here]
 PASSWORD_SALT=[your salt here]
 JWT_SIGNING_KEY=[your signing here]
 ```
+
+Command for building application
+```dotenv
+- make build
+```
+Command for running tests application
+```dotenv
+- make build
+```

@@ -44,6 +44,10 @@ func (h *Handler) CreateWSConversation(c *gin.Context) {
 	params := c.Request.URL.Query()
 
 	id, err := Parse(params.Get("id"))
+	if err != nil {
+		return
+	}
+
 	if _, err := h.ConversationService.GetById(c, id); err != nil {
 		return
 	}

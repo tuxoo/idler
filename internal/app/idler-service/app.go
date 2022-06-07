@@ -62,8 +62,14 @@ func Run(configPath string) {
 		Password: cfg.Postgres.Password,
 		SSLMode:  cfg.Postgres.SSLMode,
 	})
+	if err != nil {
+		logrus.Fatalf("error initializing postgres: %s", err.Error())
+	}
 
-	mongoClient := mongo.NewMongoDb(cfg.Mongo)
+	mongoClient, err := mongo.NewMongoDb(cfg.Mongo)
+	if err != nil {
+		logrus.Fatalf("error initializing postgres: %s", err.Error())
+	}
 	mongoDB := mongoClient.Database(cfg.Mongo.DB)
 
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)

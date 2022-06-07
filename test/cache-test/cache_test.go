@@ -34,8 +34,7 @@ func TestCache(t *testing.T) {
 	testCache.Set(ctx, testUserKey, &testUser)
 
 	cacheableUser, err := testCache.Get(ctx, testUserKey)
-	assert.Nil(t, err,
-		fmt.Sprint("Incorrect result. Expect nil"))
+	assert.Nil(t, err, "Incorrect result. Expect nil")
 
 	assert.Equal(t, testUser.id, cacheableUser.id,
 		fmt.Sprintf("Incorrect result. Expect %d, got %d", testUser.id, cacheableUser.id))

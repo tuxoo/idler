@@ -330,8 +330,13 @@ const docTemplate = `{
         "http.errorResponse": {
             "type": "object",
             "properties": {
+                "errorTime": {
+                    "type": "string",
+                    "example": "2022-06-07 22:22:20"
+                },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Token is expired"
                 }
             }
         }

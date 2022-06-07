@@ -1,8 +1,10 @@
 .idea
 .env
 
+.docker-volumes
+.bin
+
 db/liquibase.properties
 FAQ.txt
-main.exe
 
 #.docker-volumes

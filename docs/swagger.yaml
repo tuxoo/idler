@@ -50,7 +50,11 @@ definitions:
     type: object
   http.errorResponse:
     properties:
+      errorTime:
+        example: "2022-06-07 22:22:20"
+        type: string
       message:
+        example: Token is expired
         type: string
     type: object
 host: localhost:8080
