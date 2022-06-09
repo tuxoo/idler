@@ -19,7 +19,7 @@ func NewConversationService(repository postgres_repositrory.Conversations) *Conv
 	}
 }
 
-func (s *ConversationService) CreateConversation(ctx context.Context, userId int, conversationDTO dto.ConversationDTO) error {
+func (s *ConversationService) CreateConversation(ctx context.Context, userId UUID, conversationDTO dto.ConversationDTO) error {
 	conversation := entity.Conversation{
 		Name:  conversationDTO.Name,
 		Owner: userId,

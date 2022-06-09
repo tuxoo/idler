@@ -1,6 +1,9 @@
 package config
 
 import (
+	"github.com/eugene-krivtsov/idler/pkg/db/mongo"
+	"github.com/eugene-krivtsov/idler/pkg/db/postgres"
+	"github.com/eugene-krivtsov/idler/pkg/db/redis"
 	"github.com/spf13/viper"
 	"strings"
 	"time"
@@ -17,9 +20,9 @@ type (
 	Config struct {
 		HTTP     HTTPConfig
 		Auth     AuthConfig
-		Postgres PostgresConfig
-		Redis    RedisConfig
-		Mongo    MongoConfig
+		Postgres postgres.Config
+		Redis    redis.Config
+		Mongo    mongo.Config
 		WS       WSConfig
 	}
 
@@ -41,35 +44,10 @@ type (
 		SigningKey string
 	}
 
-	PostgresConfig struct {
-		Host     string
-		Port     string
-		DB       string
-		User     string
-		Password string
-		SSLMode  string
-	}
-
-	RedisConfig struct {
-		Host     string
-		Port     string
-		DB       int
-		Password string
-		Expires  time.Duration
-	}
-
 	WSConfig struct {
 		Port            string
 		ReadBufferSize  int
 		WriteBufferSize int
-	}
-
-	MongoConfig struct {
-		Host     string
-		Port     string
-		User     string
-		Password string
-		DB       string `mapstructure:"db"`
 	}
 )
 

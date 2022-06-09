@@ -15,7 +15,7 @@ const (
 type Users interface {
 	Save(user entity.User) (*dto.UserDTO, error)
 	FindByCredentials(email, password string) (*dto.UserDTO, error)
-	FindById(id int) (*dto.UserDTO, error)
+	FindById(id UUID) (*dto.UserDTO, error)
 	FindAll() ([]dto.UserDTO, error)
 	FindByEmail(email string) (*dto.UserDTO, error)
 }

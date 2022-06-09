@@ -8,7 +8,7 @@ import (
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
-	"strconv"
+	. "github.com/google/uuid"
 	"time"
 )
 
@@ -44,10 +44,10 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 	return err
 }
 
-func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (auth.Token, error) {
-	var user, err = s.userCache.Get(ctx, dto.Email)
+func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth.Token, err error) {
+	user, err := s.userCache.Get(ctx, dto.Email)
 	if err != nil {
-		return "", err
+		return
 	}
 
 	if user == nil {
@@ -57,12 +57,14 @@ func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (auth.Token
 		}
 
 		s.userCache.Set(ctx, dto.Email, user)
-		return s.tokenManager.GenerateToken(strconv.Itoa(user.Id), s.tokenTTL)
+
+		token, err = s.tokenManager.GenerateToken(user.Id.String(), s.tokenTTL)
 	}
-	return s.tokenManager.GenerateToken(strconv.Itoa(user.Id), s.tokenTTL)
+	token, err = s.tokenManager.GenerateToken(user.Id.String(), s.tokenTTL)
+	return
 }
 
-func (s *UserService) GetById(ctx context.Context, id int) (*dto.UserDTO, error) {
+func (s *UserService) GetById(ctx context.Context, id UUID) (*dto.UserDTO, error) {
 	return s.repository.FindById(id)
 }
 

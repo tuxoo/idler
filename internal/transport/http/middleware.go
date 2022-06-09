@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/gin-gonic/gin"
+	. "github.com/google/uuid"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -15,26 +15,27 @@ const (
 )
 
 func (h *Handler) userIdentity(c *gin.Context) {
-	id, err := h.parseAuthHeader(c)
+	strId, err := h.parseAuthHeader(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+	}
+
+	id, err := Parse(strId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 
 	c.Set(userCtx, id)
 }
 
-func getUserId(c *gin.Context) (int, error) {
-	id, ok := c.Get(userCtx)
+func getUserId(c *gin.Context) (id UUID, err error) {
+	ctxId, ok := c.Get(userCtx)
 	if !ok {
-		return 0, errors.New("user id not found")
+		err = errors.New("user doesn't exist in context")
 	}
 
-	strId, ok := id.(string)
-	if !ok {
-		return 0, errors.New("user id is of invalid type")
-	}
-
-	return strconv.Atoi(strId)
+	id = ctxId.(UUID)
+	return
 }
 
 func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {

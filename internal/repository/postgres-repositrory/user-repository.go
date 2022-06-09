@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
+	. "github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -37,7 +38,7 @@ func (r *UserRepository) FindByCredentials(email, password string) (*dto.UserDTO
 	return &user, nil
 }
 
-func (r *UserRepository) FindById(id int) (*dto.UserDTO, error) {
+func (r *UserRepository) FindById(id UUID) (*dto.UserDTO, error) {
 	var user dto.UserDTO
 	query := fmt.Sprintf("SELECT id, name, email FROM %s WHERE id=$1", userTable)
 	if err := r.db.Get(&user, query, id); err != nil {

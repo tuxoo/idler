@@ -7,7 +7,6 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	mongo_repository "github.com/eugene-krivtsov/idler/internal/repository/mongo-repository"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
-	"github.com/eugene-krivtsov/idler/internal/repository/redis"
 	"github.com/eugene-krivtsov/idler/internal/server"
 	"github.com/eugene-krivtsov/idler/internal/service"
 	"github.com/eugene-krivtsov/idler/internal/transport/http"
@@ -16,6 +15,7 @@ import (
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/db/mongo"
 	"github.com/eugene-krivtsov/idler/pkg/db/postgres"
+	"github.com/eugene-krivtsov/idler/pkg/db/redis"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	. "github.com/google/uuid"
 	_ "github.com/lib/pq"
@@ -54,7 +54,7 @@ func Run(configPath string) {
 		logrus.Fatalf("error initializing configs: %s", err.Error())
 	}
 
-	postgresDB, err := postgres.NewPostgresDB(config.PostgresConfig{
+	postgresDB, err := postgres.NewPostgresDB(postgres.Config{
 		Host:     cfg.Postgres.Host,
 		Port:     cfg.Postgres.Port,
 		DB:       cfg.Postgres.DB,

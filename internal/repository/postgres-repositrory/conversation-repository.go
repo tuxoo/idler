@@ -6,6 +6,7 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	. "github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type ConversationRepository struct {
@@ -22,6 +23,7 @@ func (r *ConversationRepository) Save(conversation entity.Conversation) (*dto.Co
 	query := fmt.Sprintf("INSERT INTO %s (name, owner) VALUES ($1, $2) RETURNING name, owner", conversationTable)
 	row := r.db.QueryRowx(query, conversation.Name, conversation.Owner)
 	if err := row.StructScan(&newConversation); err != nil {
+		time.Now().Format(time.Layout)
 		return &newConversation, err
 	}
 

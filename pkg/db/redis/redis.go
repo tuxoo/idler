@@ -2,11 +2,19 @@ package redis
 
 import (
 	"fmt"
-	"github.com/eugene-krivtsov/idler/internal/config"
 	"github.com/go-redis/redis/v8"
+	"time"
 )
 
-func NewRedisClient(cfg config.RedisConfig) *redis.Client {
+type Config struct {
+	Host     string
+	Port     string
+	DB       int
+	Password string
+	Expires  time.Duration
+}
+
+func NewRedisClient(cfg Config) *redis.Client {
 	return redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", cfg.Host, cfg.Port),
 		Password: cfg.Password,

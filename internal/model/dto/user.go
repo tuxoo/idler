@@ -1,7 +1,9 @@
 package dto
 
+import . "github.com/google/uuid"
+
 type UserDTO struct {
-	Id    int    `json:"id" db:"id"`
+	Id    UUID   `json:"id" db:"id"`
 	Name  string `json:"name" binding:"required"`
 	Email string `json:"email" binding:"required"`
 }

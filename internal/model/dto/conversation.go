@@ -1,7 +1,9 @@
 package dto
 
+import . "github.com/google/uuid"
+
 type ConversationDTO struct {
 	Name  string `json:"name" binding:"required"`
-	Owner int    `json:"owner"`
+	Owner UUID   `json:"owner"`
 	//Participant UserDTO `json:"participants" binding:"required"`
 }
