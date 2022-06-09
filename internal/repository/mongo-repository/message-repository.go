@@ -12,7 +12,7 @@ type MessageRepository struct {
 	db *mongo.Collection
 }
 
-func NewMessageRepositories(db *mongo.Database) *MessageRepository {
+func NewMessageRepository(db *mongo.Database) *MessageRepository {
 	return &MessageRepository{
 		db: db.Collection(messageCollection),
 	}

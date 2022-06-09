@@ -1,4 +1,4 @@
-package postgres_repositrory
+package postgres_repository
 
 import (
 	"fmt"
@@ -26,6 +26,12 @@ func (r *UserRepository) Save(user entity.User) (*dto.UserDTO, error) {
 	}
 
 	return &newUser, nil
+}
+
+func (r *UserRepository) UpdateById(id UUID) error {
+	query := fmt.Sprintf("UPDATE %s SET is_confirmed=true WHERE id=$1", userTable)
+	_, err := r.db.Exec(query, id)
+	return err
 }
 
 func (r *UserRepository) FindByCredentials(email, password string) (*dto.UserDTO, error) {

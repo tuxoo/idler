@@ -24,6 +24,6 @@ type Repositories struct {
 
 func NewRepositories(db *mongo.Database) *Repositories {
 	return &Repositories{
-		Messages: NewMessageRepositories(db),
+		Messages: NewMessageRepository(db),
 	}
 }

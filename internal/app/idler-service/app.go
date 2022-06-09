@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/config"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
-	mongo_repository "github.com/eugene-krivtsov/idler/internal/repository/mongo-repository"
-	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
+	mongorepository "github.com/eugene-krivtsov/idler/internal/repository/mongo-repository"
+	postgresrepository "github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
 	"github.com/eugene-krivtsov/idler/internal/server"
 	"github.com/eugene-krivtsov/idler/internal/service"
 	"github.com/eugene-krivtsov/idler/internal/transport/http"
@@ -78,8 +78,8 @@ func Run(configPath string) {
 	redisClient := redis.NewRedisClient(cfg.Redis)
 	userCache := cache.NewRedisCache[string, dto.UserDTO](redisClient, cfg.Redis.Expires)
 
-	postgresRepositories := postgres_repositrory.NewRepositories(postgresDB)
-	mongoRepositories := mongo_repository.NewRepositories(mongoDB)
+	postgresRepositories := postgresrepository.NewRepositories(postgresDB)
+	mongoRepositories := mongorepository.NewRepositories(mongoDB)
 
 	services := service.NewServices(service.ServicesDepends{
 		PostgresRepositories: postgresRepositories,

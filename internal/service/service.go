@@ -16,6 +16,7 @@ import (
 
 type Users interface {
 	SignUp(ctx context.Context, user dto.SignUpDTO) error
+	VerifyUser(ctx context.Context, code UUID) error
 	SignIn(ctx context.Context, user dto.SignInDTO) (auth.Token, error)
 	GetById(ctx context.Context, id UUID) (*dto.UserDTO, error)
 	GetAll(ctx context.Context) ([]dto.UserDTO, error)
@@ -43,7 +44,7 @@ type Services struct {
 }
 
 type ServicesDepends struct {
-	PostgresRepositories *postgres_repositrory.Repositories
+	PostgresRepositories *postgres_repository.Repositories
 	MongoRepositories    *mongo_repository.Repositories
 	Hasher               hash.PasswordHasher
 	TokenManager         auth.TokenManager

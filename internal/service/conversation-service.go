@@ -10,10 +10,10 @@ import (
 )
 
 type ConversationService struct {
-	repository postgres_repositrory.Conversations
+	repository postgres_repository.Conversations
 }
 
-func NewConversationService(repository postgres_repositrory.Conversations) *ConversationService {
+func NewConversationService(repository postgres_repository.Conversations) *ConversationService {
 	return &ConversationService{
 		repository: repository,
 	}

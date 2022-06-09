@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 )
 
@@ -11,6 +12,7 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 	{
 		user.POST("/sign-up", h.signUp)
 		user.POST("/sign-in", h.signIn)
+		user.POST("/verify/:code", h.verifyUser)
 
 		authenticated := user.Group("/", h.userIdentity)
 		{
@@ -77,6 +79,25 @@ func (h *Handler) signIn(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]any{
 		"token": token,
 	})
+}
+
+func (h *Handler) verifyUser(c *gin.Context) {
+	code := c.Param("code")
+	if code == "" {
+		newErrorResponse(c, http.StatusBadRequest, "code is empty")
+		return
+	}
+
+	id, err := uuid.Parse(code)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "unsupported code format")
+	}
+
+	if err := h.userService.VerifyUser(c, id); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+	}
+
+	c.Status(http.StatusOK)
 }
 
 // @Summary 	User Profile

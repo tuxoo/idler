@@ -13,14 +13,14 @@ import (
 )
 
 type UserService struct {
-	repository   postgres_repositrory.Users
+	repository   postgres_repository.Users
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 	tokenTTL     time.Duration
 	userCache    cache.Cache[string, dto.UserDTO]
 }
 
-func NewUserService(repository postgres_repositrory.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache cache.Cache[string, dto.UserDTO]) *UserService {
+func NewUserService(repository postgres_repository.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache cache.Cache[string, dto.UserDTO]) *UserService {
 	return &UserService{
 		repository:   repository,
 		hasher:       hasher,
@@ -42,6 +42,10 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 	newUser, err := s.repository.Save(user)
 	s.userCache.Set(ctx, dto.Email, newUser)
 	return err
+}
+
+func (s *UserService) VerifyUser(ctx context.Context, id UUID) error {
+	return s.repository.UpdateById(id)
 }
 
 func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth.Token, err error) {
