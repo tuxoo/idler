@@ -40,7 +40,7 @@ services:
     command: redis-server --include /usr/local/etc/redis/redis.conf
     volumes:
       - ./redis:/usr/local/etc/redis
-      - ./docker-volumes/redis:/data
+      - ./.docker-volumes/redis:/data
     ports:
       - ${REDIS_PORT}:6379
     networks:
