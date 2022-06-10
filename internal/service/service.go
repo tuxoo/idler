@@ -6,6 +6,7 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	mongo_repository "github.com/eugene-krivtsov/idler/internal/repository/mongo-repository"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
+	"github.com/eugene-krivtsov/idler/internal/transport/gRPC/client"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
@@ -50,10 +51,11 @@ type ServicesDepends struct {
 	TokenManager         auth.TokenManager
 	TokenTTL             time.Duration
 	UserCache            cache.Cache[string, dto.UserDTO]
+	GrpcClient           *client.GrpcClient
 }
 
 func NewServices(deps ServicesDepends) *Services {
-	userService := NewUserService(deps.PostgresRepositories.Users, deps.Hasher, deps.TokenManager, deps.TokenTTL, deps.UserCache)
+	userService := NewUserService(deps.PostgresRepositories.Users, deps.Hasher, deps.TokenManager, deps.TokenTTL, deps.UserCache, deps.GrpcClient)
 	conversationService := NewConversationService(deps.PostgresRepositories.Conversations)
 	messageService := NewMessageService(deps.MongoRepositories.Messages)
 

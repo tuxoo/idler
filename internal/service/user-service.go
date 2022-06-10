@@ -5,6 +5,8 @@ import (
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
+	"github.com/eugene-krivtsov/idler/internal/transport/gRPC/api"
+	"github.com/eugene-krivtsov/idler/internal/transport/gRPC/client"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
@@ -18,15 +20,17 @@ type UserService struct {
 	tokenManager auth.TokenManager
 	tokenTTL     time.Duration
 	userCache    cache.Cache[string, dto.UserDTO]
+	grpcClient   *client.GrpcClient
 }
 
-func NewUserService(repository postgres_repository.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache cache.Cache[string, dto.UserDTO]) *UserService {
+func NewUserService(repository postgres_repository.Users, hasher hash.PasswordHasher, tokenManager auth.TokenManager, tokenTTL time.Duration, userCache cache.Cache[string, dto.UserDTO], grpcClient *client.GrpcClient) *UserService {
 	return &UserService{
 		repository:   repository,
 		hasher:       hasher,
 		tokenManager: tokenManager,
 		tokenTTL:     tokenTTL,
 		userCache:    userCache,
+		grpcClient:   grpcClient,
 	}
 }
 
@@ -40,7 +44,18 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 	}
 
 	_, err := s.repository.Save(user)
-	return err
+	if err != nil {
+		return err
+	}
+
+	_, err = s.grpcClient.MailSender.SendMail(ctx, &api.Mail{
+		Address: dto.Email,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *UserService) VerifyUser(ctx context.Context, id UUID) error {

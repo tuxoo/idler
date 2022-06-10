@@ -29,3 +29,7 @@ mongo:
   host: localhost
   port: 27017
   dbname: idler
+
+mail:
+  host: localhost
+  port: 8088

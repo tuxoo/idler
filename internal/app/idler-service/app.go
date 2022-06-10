@@ -9,6 +9,7 @@ import (
 	postgresrepository "github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
 	"github.com/eugene-krivtsov/idler/internal/server"
 	"github.com/eugene-krivtsov/idler/internal/service"
+	"github.com/eugene-krivtsov/idler/internal/transport/gRPC/client"
 	"github.com/eugene-krivtsov/idler/internal/transport/http"
 	"github.com/eugene-krivtsov/idler/internal/transport/ws"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
@@ -20,6 +21,7 @@ import (
 	. "github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 	"os"
 	"os/signal"
 	"syscall"
@@ -81,6 +83,10 @@ func Run(configPath string) {
 	postgresRepositories := postgresrepository.NewRepositories(postgresDB)
 	mongoRepositories := mongorepository.NewRepositories(mongoDB)
 
+	grpcTarget := fmt.Sprintf("%s:%s", cfg.Mail.Host, cfg.Mail.Port)
+	grpcConn, err := grpc.Dial(grpcTarget, grpc.WithInsecure())
+	grpcClient := client.NewGrpcClient(grpcConn)
+
 	services := service.NewServices(service.ServicesDepends{
 		PostgresRepositories: postgresRepositories,
 		MongoRepositories:    mongoRepositories,
@@ -88,6 +94,7 @@ func Run(configPath string) {
 		TokenManager:         tokenManager,
 		TokenTTL:             cfg.Auth.JWT.TokenTTL,
 		UserCache:            userCache,
+		GrpcClient:           grpcClient,
 	})
 	httpHandlers := http.NewHandler(services.UserService, tokenManager, services.ConversationService)
 	httpServer := server.NewHTTPServer(cfg, httpHandlers.Init(cfg.HTTP))

@@ -24,6 +24,7 @@ type (
 		Redis    redis.Config
 		Mongo    mongo.Config
 		WS       WSConfig
+		Mail     MailConfig
 	}
 
 	HTTPConfig struct {
@@ -48,6 +49,11 @@ type (
 		Port            string
 		ReadBufferSize  int
 		WriteBufferSize int
+	}
+
+	MailConfig struct {
+		Host string
+		Port string
 	}
 )
 
@@ -116,6 +122,22 @@ func parseEnv() error {
 	}
 
 	if err := parseLineEnv("websocket.port", "WEBSOCKET_PORT"); err != nil {
+		return err
+	}
+
+	if err := parseMailEnv(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func parseMailEnv() error {
+	if err := viper.BindEnv("mail.host", "MAIL_HOST"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("mail.port", "MAIL_PORT"); err != nil {
 		return err
 	}
 
@@ -218,6 +240,10 @@ func unmarshalConfig(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("mail", &cfg.Mail); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -246,4 +272,7 @@ func setFromEnv(cfg *Config) {
 	cfg.Mongo.User = viper.GetString("mongo.user")
 	cfg.Mongo.Password = viper.GetString("mongo.password")
 	cfg.Mongo.DB = viper.GetString("mongo.db")
+
+	cfg.Mail.Host = viper.GetString("mail.host")
+	cfg.Mail.Port = viper.GetString("mail.port")
 }
