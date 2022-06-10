@@ -36,7 +36,7 @@ func (r *UserRepository) UpdateById(id UUID) error {
 
 func (r *UserRepository) FindByCredentials(email, password string) (*dto.UserDTO, error) {
 	var user dto.UserDTO
-	query := fmt.Sprintf("SELECT id FROM %s WHERE email=$1 AND password_hash=$2", userTable)
+	query := fmt.Sprintf("SELECT id FROM %s WHERE is_confirmed=true AND email=$1 AND password_hash=$2", userTable)
 	if err := r.db.Get(&user, query, email, password); err != nil {
 		return &user, err
 	}

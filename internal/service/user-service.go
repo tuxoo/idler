@@ -39,8 +39,7 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 		VisitedAt:    time.Now(),
 	}
 
-	newUser, err := s.repository.Save(user)
-	s.userCache.Set(ctx, dto.Email, newUser)
+	_, err := s.repository.Save(user)
 	return err
 }
 
@@ -50,12 +49,9 @@ func (s *UserService) VerifyUser(ctx context.Context, id UUID) error {
 
 func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth.Token, err error) {
 	user, err := s.userCache.Get(ctx, dto.Email)
-	if err != nil {
-		return
-	}
 
-	if user == nil {
-		user, err := s.repository.FindByCredentials(dto.Email, s.hasher.Hash(dto.Password))
+	if err != nil {
+		user, err = s.repository.FindByCredentials(dto.Email, s.hasher.Hash(dto.Password))
 		if err != nil {
 			return "", err
 		}
@@ -63,6 +59,7 @@ func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth
 		s.userCache.Set(ctx, dto.Email, user)
 
 		token, err = s.tokenManager.GenerateToken(user.Id.String(), s.tokenTTL)
+		return
 	}
 	token, err = s.tokenManager.GenerateToken(user.Id.String(), s.tokenTTL)
 	return
