@@ -26,7 +26,7 @@ type Users interface {
 
 type Conversations interface {
 	CreateConversation(ctx context.Context, userId UUID, conversation dto.ConversationDTO) error
-	GetAll(c *gin.Context) ([]dto.ConversationDTO, error)
+	GetByOwnerId(c *gin.Context, id UUID) ([]dto.ConversationDTO, error)
 	GetById(ctx context.Context, id UUID) (*dto.ConversationDTO, error)
 	RemoveById(ctx context.Context, id UUID) error
 }

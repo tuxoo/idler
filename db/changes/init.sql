@@ -16,6 +16,6 @@ CREATE TABLE conversation
     id           uuid default gen_random_uuid() primary key,
     name         varchar(255)                        not null,
     owner        uuid
-        constraint fk_owner unique references "user" not null,
+        constraint fk_owner references "user" not null,
     participants jsonb
 );

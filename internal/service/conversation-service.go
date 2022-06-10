@@ -31,8 +31,8 @@ func (s *ConversationService) CreateConversation(ctx context.Context, userId UUI
 	return err
 }
 
-func (s *ConversationService) GetAll(c *gin.Context) ([]dto.ConversationDTO, error) {
-	return s.repository.FindAll()
+func (s *ConversationService) GetByOwnerId(c *gin.Context, id UUID) ([]dto.ConversationDTO, error) {
+	return s.repository.FindByOwnerId(id)
 }
 
 func (s *ConversationService) GetById(ctx context.Context, id UUID) (*dto.ConversationDTO, error) {

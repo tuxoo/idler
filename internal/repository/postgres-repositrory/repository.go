@@ -23,7 +23,7 @@ type Users interface {
 
 type Conversations interface {
 	Save(conversation entity.Conversation) (*dto.ConversationDTO, error)
-	FindAll() ([]dto.ConversationDTO, error)
+	FindByOwnerId(id UUID) ([]dto.ConversationDTO, error)
 	FindById(id UUID) (*dto.ConversationDTO, error)
 	DeleteById(id UUID) error
 }

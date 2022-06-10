@@ -16,7 +16,7 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 
 		authenticated := user.Group("/", h.userIdentity)
 		{
-			authenticated.GET("/profile", h.getCurrentUser)
+			authenticated.GET("/profile", h.getUserProfile)
 			authenticated.GET("/", h.getAllUsers)
 			authenticated.GET("/:email", h.getUserByEmail)
 		}
@@ -111,7 +111,7 @@ func (h *Handler) verifyUser(c *gin.Context) {
 // @Failure 	500 {object} 		errorResponse
 // @Failure 	default {object} 	errorResponse
 // @Router 		/user/profile 		[get]
-func (h *Handler) getCurrentUser(c *gin.Context) {
+func (h *Handler) getUserProfile(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())

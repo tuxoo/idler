@@ -30,11 +30,11 @@ func (r *ConversationRepository) Save(conversation entity.Conversation) (*dto.Co
 	return &newConversation, nil
 }
 
-func (r *ConversationRepository) FindAll() ([]dto.ConversationDTO, error) {
+func (r *ConversationRepository) FindByOwnerId(id UUID) ([]dto.ConversationDTO, error) {
 	var conversations []dto.ConversationDTO
-	query := fmt.Sprintf("SELECT name, owner FROM %s", conversationTable)
+	query := fmt.Sprintf("SELECT name, owner FROM %s WHERE owner=$1", conversationTable)
 
-	err := r.db.Select(&conversations, query)
+	err := r.db.Select(&conversations, query, id)
 	if err != nil {
 		return conversations, err
 	}

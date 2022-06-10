@@ -12,7 +12,7 @@ func (h *Handler) initConversationRoutes(api *gin.RouterGroup) {
 	chat := api.Group("/conversation", h.userIdentity)
 	{
 		chat.POST("/", h.createConversation)
-		chat.GET("/", h.getAllConversations)
+		chat.GET("/", h.getUserConversations)
 		chat.GET("/:id", h.getConversationById)
 		chat.DELETE("/:id", h.deleteConversationById)
 	}
@@ -64,14 +64,14 @@ func (h *Handler) createConversation(c *gin.Context) {
 // @Failure 	500 	{object} 	errorResponse
 // @Failure 	default {object} 	errorResponse
 // @Router 		/conversation 		[get]
-func (h *Handler) getAllConversations(c *gin.Context) {
-	_, err := getUserId(c)
+func (h *Handler) getUserConversations(c *gin.Context) {
+	id, err := getUserId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	conversations, err := h.conversationService.GetAll(c)
+	conversations, err := h.conversationService.GetByOwnerId(c, id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
