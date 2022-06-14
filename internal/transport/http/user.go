@@ -12,6 +12,7 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 	{
 		user.POST("/sign-up", h.signUp)
 		user.POST("/sign-in", h.signIn)
+		user.GET("/verify", h.getVerifyCode)
 		user.POST("/verify/:code", h.verifyUser)
 
 		authenticated := user.Group("/", h.userIdentity)
@@ -81,6 +82,18 @@ func (h *Handler) signIn(c *gin.Context) {
 	})
 }
 
+// @Summary 	Verify User
+// @Security 	Bearer
+// @Tags 		user
+// @Description verifies user email
+// @ID 			verifyUser
+// @Accept  	json
+// @Produce  	json
+// @Success 	200
+// @Failure 	400 {object} 		errorResponse
+// @Failure 	500 {object} 		errorResponse
+// @Failure 	default {object} 	errorResponse
+// @Router 		/user/verify 		[post]
 func (h *Handler) verifyUser(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
@@ -98,6 +111,22 @@ func (h *Handler) verifyUser(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+// @Summary 	Get Verify Code
+// @Security 	Bearer
+// @Tags 		user
+// @Description gets verify code to email
+// @ID 			getVerifyCode
+// @Accept  	json
+// @Produce  	json
+// @Success 	200
+// @Failure 	400 {object} 		errorResponse
+// @Failure 	500 {object} 		errorResponse
+// @Failure 	default {object} 	errorResponse
+// @Router 		/user/verify 		[get]
+func (h *Handler) getVerifyCode(c *gin.Context) {
+
 }
 
 // @Summary 	User Profile

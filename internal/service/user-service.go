@@ -63,25 +63,27 @@ func (s *UserService) VerifyUser(ctx context.Context, id UUID) error {
 }
 
 func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth.Token, err error) {
-	user, err := s.userCache.Get(ctx, dto.Email)
-
+	user, err := s.repository.FindByCredentials(dto.Email, s.hasher.Hash(dto.Password))
 	if err != nil {
-		user, err = s.repository.FindByCredentials(dto.Email, s.hasher.Hash(dto.Password))
-		if err != nil {
-			return "", err
-		}
-
-		s.userCache.Set(ctx, dto.Email, user)
-
-		token, err = s.tokenManager.GenerateToken(user.Id.String(), s.tokenTTL)
-		return
+		return "", err
 	}
-	token, err = s.tokenManager.GenerateToken(user.Id.String(), s.tokenTTL)
+
+	id := user.Id.String()
+	_, err = s.userCache.Get(ctx, id)
+	if err != nil {
+		s.userCache.Set(ctx, id, user)
+	}
+
+	token, err = s.tokenManager.GenerateToken(id, s.tokenTTL)
 	return
 }
 
-func (s *UserService) GetById(ctx context.Context, id UUID) (*dto.UserDTO, error) {
-	return s.repository.FindById(id)
+func (s *UserService) GetById(ctx context.Context, id UUID) (user *dto.UserDTO, err error) {
+	user, err = s.userCache.Get(ctx, id.String())
+	if err != nil {
+		user, err = s.repository.FindById(id)
+	}
+	return
 }
 
 func (s *UserService) GetAll(ctx context.Context) ([]dto.UserDTO, error) {
