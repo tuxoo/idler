@@ -37,8 +37,8 @@ func NewUserService(repository postgres_repository.Users, hasher hash.PasswordHa
 func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 	user := entity.User{
 		Name:         dto.Name,
-		Email:        dto.Email,
-		Password:     s.hasher.Hash(dto.Password),
+		LoginEmail:   dto.Email,
+		PasswordHash: s.hasher.Hash(dto.Password),
 		RegisteredAt: time.Now(),
 		VisitedAt:    time.Now(),
 	}

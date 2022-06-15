@@ -18,5 +18,5 @@ func (h *SHA1Hasher) Hash(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(h.salt)))
+	return fmt.Sprintf("%x", hash.Sum(nil)) // TODO: ADD salt
 }

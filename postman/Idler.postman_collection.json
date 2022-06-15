@@ -26,7 +26,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"alex\",\r\n    \"email\": \"kill-77@mail.ru\",\r\n    \"password\": \"qwerty\"\r\n}",
+							"raw": "{\r\n    \"name\": \"alex\",\r\n    \"email\": \"kia-77@mail.ru\",\r\n    \"password\": \"qwerty\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -41,6 +41,35 @@
 							"path": [
 								"user",
 								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/user/verify/a3cfeaa1-5205-4652-b9fd-1620728284fc",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"verify",
+								"a3cfeaa1-5205-4652-b9fd-1620728284fc"
 							]
 						}
 					},
@@ -63,7 +92,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"alex\",\r\n    \"email\": \"kill-77@mail.ru\"\r\n}",
+							"raw": "{\r\n    \"email\": \"kia-77@mail.ru\",\r\n    \"password\": \"qwerty\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -198,13 +227,6 @@
 							"path": [
 								"user",
 								"kia-77@mail.ru"
-							],
-							"query": [
-								{
-									"key": "email",
-									"value": "kia-77@mail.ru",
-									"disabled": true
-								}
 							]
 						}
 					},
@@ -259,7 +281,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"test\",\r\n    \"participants\": [\r\n        {\r\n            \"name\": \"eugene\",\r\n            \"email\": \"kia-77\"\r\n        }\r\n        \r\n    ]\r\n}",
+							"raw": "{\r\n    \"name\": \"test\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -294,13 +316,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}/conversation/9",
+							"raw": "{{host}}/conversation/e1d0045f-a30f-47df-89b6-478ab51a4646",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"conversation",
-								"9"
+								"e1d0045f-a30f-47df-89b6-478ab51a4646"
 							]
 						}
 					},
@@ -387,12 +409,12 @@
 	"variable": [
 		{
 			"key": "host",
-			"value": "http://localhost:8080",
+			"value": "http://localhost:8080/api/v1",
 			"type": "default"
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTQ1MjA3ODUsInN1YiI6IjE0In0.BYgQ0Y9q-XtIz6d0k6W-3weuUQfDC54fBcKsGJoV59o",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTUyMDIwODIsInN1YiI6IjI5MTk1MDUwLWMxNDYtNDI1NS04NmU5LTQ3MTRiYzEwNWQxNiJ9.bQFduMLu2YfJt_qcUFNn8qHbwCkt7EtjT35zPXcWohs",
 			"type": "default"
 		}
 	]
