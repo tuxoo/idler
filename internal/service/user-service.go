@@ -69,10 +69,7 @@ func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth
 	}
 
 	id := user.Id.String()
-	_, err = s.userCache.Get(ctx, id)
-	if err != nil {
-		s.userCache.Set(ctx, id, user)
-	}
+	s.userCache.Set(ctx, id, user)
 
 	token, err = s.tokenManager.GenerateToken(id, s.tokenTTL)
 	return
