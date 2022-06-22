@@ -2,8 +2,8 @@ http:
   host: localhost
   port: 8080
   maxHeaderMegabytes: 1
-  readTimeout: 10s
-  writeTimeout: 10s
+  readTimeout: 5s
+  writeTimeout: 15s
 
 auth:
   tokenTTL: 180m

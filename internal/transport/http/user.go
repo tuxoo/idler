@@ -3,21 +3,19 @@ package http
 import (
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"net/http"
 )
 
 func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 	user := api.Group("/user")
 	{
-		user.POST("/sign-up", h.signUp)
-		user.POST("/sign-in", h.signIn)
-		user.GET("/verify", h.getVerifyCode)
-		user.POST("/verify/:code", h.verifyUser)
+		user.POST("/sign-up/", h.signUp)
+		user.POST("/sign-in/", h.signIn)
+		user.POST("/verify/", h.verifyUser)
 
 		authenticated := user.Group("/", h.userIdentity)
 		{
-			authenticated.GET("/profile", h.getUserProfile)
+			authenticated.GET("/profile/", h.getUserProfile)
 			authenticated.GET("/", h.getAllUsers)
 			authenticated.GET("/:email", h.getUserByEmail)
 		}
@@ -67,7 +65,7 @@ func (h *Handler) signUp(c *gin.Context) {
 func (h *Handler) signIn(c *gin.Context) {
 	var signInDTO dto.SignInDTO
 	if err := c.BindJSON(&signInDTO); err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -95,38 +93,17 @@ func (h *Handler) signIn(c *gin.Context) {
 // @Failure 	default {object} 	errorResponse
 // @Router 		/user/verify 		[post]
 func (h *Handler) verifyUser(c *gin.Context) {
-	code := c.Param("code")
-	if code == "" {
-		newErrorResponse(c, http.StatusBadRequest, "code is empty")
+	var verifyDTO dto.VerifyDTO
+	if err := c.BindJSON(&verifyDTO); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := uuid.Parse(code)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "unsupported code format")
-	}
-
-	if err := h.userService.VerifyUser(c, id); err != nil {
+	if err := h.userService.VerifyUser(c, verifyDTO); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 
 	c.Status(http.StatusOK)
-}
-
-// @Summary 	Get Verify Code
-// @Security 	Bearer
-// @Tags 		user
-// @Description gets verify code to email
-// @ID 			getVerifyCode
-// @Accept  	json
-// @Produce  	json
-// @Success 	200
-// @Failure 	400 {object} 		errorResponse
-// @Failure 	500 {object} 		errorResponse
-// @Failure 	default {object} 	errorResponse
-// @Router 		/user/verify 		[get]
-func (h *Handler) getVerifyCode(c *gin.Context) {
-
 }
 
 // @Summary 	User Profile
@@ -204,7 +181,7 @@ func (h *Handler) getUserByEmail(c *gin.Context) {
 
 	user, err := h.userService.GetByEmail(c, c.Param("email"))
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusNotFound, err.Error())
 		return
 	}
 

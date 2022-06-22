@@ -1,10 +1,11 @@
 package postgres_repository
 
 import (
+	"context"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	. "github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 const (
@@ -13,19 +14,19 @@ const (
 )
 
 type Users interface {
-	Save(user entity.User) (*dto.UserDTO, error)
-	UpdateById(id UUID) error
-	FindByCredentials(email, password string) (*dto.UserDTO, error)
-	FindById(id UUID) (*dto.UserDTO, error)
-	FindAll() ([]dto.UserDTO, error)
-	FindByEmail(email string) (*dto.UserDTO, error)
+	Save(ctx context.Context, user entity.User) (*dto.UserDTO, error)
+	UpdateById(ctx context.Context, id UUID) error
+	FindByCredentials(ctx context.Context, email, password string) (*dto.UserDTO, error)
+	FindById(ctx context.Context, id UUID) (*dto.UserDTO, error)
+	FindAll(ctx context.Context) ([]dto.UserDTO, error)
+	FindByEmail(ctx context.Context, email string, isEnabled bool) (*dto.UserDTO, error)
 }
 
 type Conversations interface {
-	Save(conversation entity.Conversation) (*dto.ConversationDTO, error)
-	FindByOwnerId(id UUID) ([]dto.ConversationDTO, error)
-	FindById(id UUID) (*dto.ConversationDTO, error)
-	DeleteById(id UUID) error
+	Save(ctx context.Context, conversation entity.Conversation) (*dto.ConversationDTO, error)
+	FindByOwnerId(ctx context.Context, id UUID) ([]dto.ConversationDTO, error)
+	FindById(ctx context.Context, id UUID) (*dto.ConversationDTO, error)
+	DeleteById(ctx context.Context, id UUID) error
 }
 
 type Repositories struct {
@@ -33,7 +34,8 @@ type Repositories struct {
 	Conversations Conversations
 }
 
-func NewRepositories(db *sqlx.DB) *Repositories {
+func NewRepositories(db *pgxpool.Pool) *Repositories {
+	//func NewRepositories(db *sqlx.DB) *Repositories {
 	return &Repositories{
 		Users:         NewUserRepository(db),
 		Conversations: NewConversationRepository(db),

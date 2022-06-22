@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
-	"github.com/eugene-krivtsov/idler/internal/transport/gRPC/api"
 	"github.com/eugene-krivtsov/idler/internal/transport/gRPC/client"
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/cache"
@@ -43,27 +43,40 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 		VisitedAt:    time.Now(),
 	}
 
-	_, err := s.repository.Save(user)
+	_, err := s.repository.Save(ctx, user)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.grpcClient.MailSender.SendMail(ctx, &api.Mail{
-		Address: dto.Email,
-	})
-	if err != nil {
-		return err
-	}
+	//_, err = s.grpcClient.MailSender.SendMail(ctx, &api.Mail{
+	//	Address: dto.Email,
+	//})
+	//if err != nil {
+	//	return err
+	//}
 
 	return nil
 }
 
-func (s *UserService) VerifyUser(ctx context.Context, id UUID) error {
-	return s.repository.UpdateById(id)
+func (s *UserService) VerifyUser(ctx context.Context, verifyDTO dto.VerifyDTO) error {
+	user, err := s.repository.FindByEmail(ctx, verifyDTO.Email, false)
+	if err != nil {
+		return err
+	}
+
+	if user == nil {
+		return errors.New("unknown user")
+	}
+
+	if verifyDTO.CheckCode != s.hasher.Hash(user.Name) {
+		return errors.New("illegal code")
+	}
+
+	return s.repository.UpdateById(ctx, user.Id)
 }
 
 func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth.Token, err error) {
-	user, err := s.repository.FindByCredentials(dto.Email, s.hasher.Hash(dto.Password))
+	user, err := s.repository.FindByCredentials(ctx, dto.Email, s.hasher.Hash(dto.Password))
 	if err != nil {
 		return "", err
 	}
@@ -78,15 +91,15 @@ func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth
 func (s *UserService) GetById(ctx context.Context, id UUID) (user *dto.UserDTO, err error) {
 	user, err = s.userCache.Get(ctx, id.String())
 	if err != nil {
-		user, err = s.repository.FindById(id)
+		user, err = s.repository.FindById(ctx, id)
 	}
 	return
 }
 
 func (s *UserService) GetAll(ctx context.Context) ([]dto.UserDTO, error) {
-	return s.repository.FindAll()
+	return s.repository.FindAll(ctx)
 }
 
 func (s *UserService) GetByEmail(ctx context.Context, email string) (*dto.UserDTO, error) {
-	return s.repository.FindByEmail(email)
+	return s.repository.FindByEmail(ctx, email, true)
 }

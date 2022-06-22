@@ -1,13 +1,14 @@
 package postgres
 
 import (
-	"fmt"
-	"github.com/jmoiron/sqlx"
+	"context"
+	"github.com/jackc/pgx/v4/pgxpool"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	"time"
 )
 
 const (
-	driverName = "postgres"
+	driverName = "pgx"
 )
 
 type Config struct {
@@ -19,23 +20,24 @@ type Config struct {
 	SSLMode  string
 }
 
-func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
-	db, err := sqlx.Open(driverName, fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		cfg.Host, cfg.Port, cfg.User, cfg.DB, cfg.Password, cfg.SSLMode))
-
+func NewPostgresPool(cfg Config) (*pgxpool.Pool, error) {
+	config, err := pgxpool.ParseConfig("")
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(4)
-	db.SetMaxIdleConns(20)
-	db.SetConnMaxLifetime(5 * time.Minute)
-	db.SetConnMaxIdleTime(5 * time.Minute)
+	config.ConnConfig.Host = cfg.Host
+	config.ConnConfig.Port = 5432
+	config.ConnConfig.Database = cfg.DB
+	config.ConnConfig.User = cfg.User
+	config.ConnConfig.Password = cfg.Password
 
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
+	config.MaxConns = 4
+	config.MinConns = 2
+	config.MaxConnLifetime = 5 * time.Second
+	config.MaxConnIdleTime = 5 * time.Second
 
-	return db, nil
+	pool, err := pgxpool.ConnectConfig(context.Background(), config)
+
+	return pool, nil
 }

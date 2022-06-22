@@ -20,6 +20,11 @@ type SignInDTO struct {
 	Password string `json:"password" binding:"required,min=6,max=64" example:"qwerty"`
 }
 
+type VerifyDTO struct {
+	Email     string `json:"email" binding:"required,email,max=64" example:"kill-77@mail.ru"`
+	CheckCode string `json:"checkCode" binding:"" example:"e0b3073a05c0ed4920787a4f1574ff0066f7521e"`
+}
+
 type SignUpDTO struct {
 	Name     string `json:"name" binding:"required,min=2,max=64" example:"alex"`
 	Email    string `json:"email" binding:"required,email,max=64" example:"kill-77@mail.ru"`

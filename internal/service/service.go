@@ -10,14 +10,13 @@ import (
 	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
-	"github.com/gin-gonic/gin"
 	. "github.com/google/uuid"
 	"time"
 )
 
 type Users interface {
 	SignUp(ctx context.Context, user dto.SignUpDTO) error
-	VerifyUser(ctx context.Context, code UUID) error
+	VerifyUser(ctx context.Context, verifyDTO dto.VerifyDTO) error
 	SignIn(ctx context.Context, user dto.SignInDTO) (auth.Token, error)
 	GetById(ctx context.Context, id UUID) (*dto.UserDTO, error)
 	GetAll(ctx context.Context) ([]dto.UserDTO, error)
@@ -26,7 +25,7 @@ type Users interface {
 
 type Conversations interface {
 	CreateConversation(ctx context.Context, userId UUID, conversation dto.ConversationDTO) error
-	GetByOwnerId(c *gin.Context, id UUID) ([]dto.ConversationDTO, error)
+	GetByOwnerId(ctx context.Context, id UUID) ([]dto.ConversationDTO, error)
 	GetById(ctx context.Context, id UUID) (*dto.ConversationDTO, error)
 	RemoveById(ctx context.Context, id UUID) error
 }

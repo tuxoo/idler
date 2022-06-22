@@ -19,7 +19,7 @@ import (
 	"github.com/eugene-krivtsov/idler/pkg/db/redis"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	. "github.com/google/uuid"
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"os"
@@ -56,7 +56,7 @@ func Run(configPath string) {
 		logrus.Fatalf("error initializing configs: %s", err.Error())
 	}
 
-	postgresDB, err := postgres.NewPostgresDB(postgres.Config{
+	postgresDB, err := postgres.NewPostgresPool(postgres.Config{
 		Host:     cfg.Postgres.Host,
 		Port:     cfg.Postgres.Port,
 		DB:       cfg.Postgres.DB,
@@ -78,7 +78,7 @@ func Run(configPath string) {
 	tokenManager := auth.NewJWTTokenManager(cfg.Auth.JWT.SigningKey)
 
 	redisClient := redis.NewRedisClient(cfg.Redis)
-	userCache := cache.NewRedisCache[string, dto.UserDTO](redisClient, cfg.Redis.Expires)
+	userCache := cache.NewMemoryCache[string, dto.UserDTO]()
 
 	postgresRepositories := postgresrepository.NewRepositories(postgresDB)
 	mongoRepositories := mongorepository.NewRepositories(mongoDB)
@@ -131,9 +131,10 @@ func Run(configPath string) {
 		logrus.Errorf("error occured on ws server shutting down: %s", err.Error())
 	}
 
-	if err := postgresDB.Close(); err != nil {
-		logrus.Errorf("error occured on postgres connection close: %s", err.Error())
-	}
+	postgresDB.Close()
+	//if err := postgresDB.Close(); err != nil {
+	//	logrus.Errorf("error occured on postgres connection close: %s", err.Error())
+	//}
 
 	if err := mongoClient.Disconnect(context.Background()); err != nil {
 		logrus.Errorf("error occured on mongo connection close: %s", err.Error())
