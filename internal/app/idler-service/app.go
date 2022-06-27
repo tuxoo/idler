@@ -16,7 +16,6 @@ import (
 	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/eugene-krivtsov/idler/pkg/db/mongo"
 	"github.com/eugene-krivtsov/idler/pkg/db/postgres"
-	"github.com/eugene-krivtsov/idler/pkg/db/redis"
 	"github.com/eugene-krivtsov/idler/pkg/hash"
 	. "github.com/google/uuid"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -57,12 +56,15 @@ func Run(configPath string) {
 	}
 
 	postgresDB, err := postgres.NewPostgresPool(postgres.Config{
-		Host:     cfg.Postgres.Host,
-		Port:     cfg.Postgres.Port,
-		DB:       cfg.Postgres.DB,
-		User:     cfg.Postgres.User,
-		Password: cfg.Postgres.Password,
-		SSLMode:  cfg.Postgres.SSLMode,
+		Host:            cfg.Postgres.Host,
+		Port:            cfg.Postgres.Port,
+		DB:              cfg.Postgres.DB,
+		User:            cfg.Postgres.User,
+		Password:        cfg.Postgres.Password,
+		MaxConns:        cfg.Postgres.MaxConns,
+		MinConns:        cfg.Postgres.MinConns,
+		MaxConnLifetime: cfg.Postgres.MaxConnLifetime,
+		MaxConnIdleTime: cfg.Postgres.MaxConnIdleTime,
 	})
 	if err != nil {
 		logrus.Fatalf("error initializing postgres: %s", err.Error())
@@ -77,7 +79,6 @@ func Run(configPath string) {
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	tokenManager := auth.NewJWTTokenManager(cfg.Auth.JWT.SigningKey)
 
-	redisClient := redis.NewRedisClient(cfg.Redis)
 	userCache := cache.NewMemoryCache[string, dto.UserDTO]()
 
 	postgresRepositories := postgresrepository.NewRepositories(postgresDB)
@@ -132,15 +133,8 @@ func Run(configPath string) {
 	}
 
 	postgresDB.Close()
-	//if err := postgresDB.Close(); err != nil {
-	//	logrus.Errorf("error occured on postgres connection close: %s", err.Error())
-	//}
 
 	if err := mongoClient.Disconnect(context.Background()); err != nil {
 		logrus.Errorf("error occured on mongo connection close: %s", err.Error())
-	}
-
-	if err := redisClient.Close(); err != nil {
-		logrus.Errorf("error occured on redic client close: %s", err.Error())
 	}
 }

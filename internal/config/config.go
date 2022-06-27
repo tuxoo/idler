@@ -255,7 +255,7 @@ func setFromEnv(cfg *Config) {
 	cfg.HTTP.Port = viper.GetString("http.port")
 
 	cfg.Postgres.Host = viper.GetString("postgres.host")
-	cfg.Postgres.Port = viper.GetString("postgres.port")
+	cfg.Postgres.Port = viper.GetUint("postgres.port")
 	cfg.Postgres.DB = viper.GetString("postgres.db")
 	cfg.Postgres.User = viper.GetString("postgres.user")
 	cfg.Postgres.Password = viper.GetString("postgres.password")

@@ -14,8 +14,6 @@ import (
 	"time"
 )
 
-const ()
-
 type Handler struct {
 	userService         service.Users
 	tokenManager        auth.TokenManager
@@ -31,7 +29,7 @@ func NewHandler(userService service.Users, tokenManager auth.TokenManager, dialo
 }
 
 func (h *Handler) Init(cfg config.HTTPConfig) *gin.Engine {
-	router := gin.Default()
+	router := gin.New()
 
 	corsConfig := cors.Config{
 		AllowOrigins:     []string{"*"},

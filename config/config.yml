@@ -1,9 +1,9 @@
 http:
   host: localhost
-  port: 8080
+  port: 9000
   maxHeaderMegabytes: 1
   readTimeout: 5s
-  writeTimeout: 15s
+  writeTimeout: 10s
 
 auth:
   tokenTTL: 180m
@@ -12,7 +12,10 @@ postgres:
   host: localhost
   port: 5432
   dbname: idler
-  sslmode: disable
+  maxConns: 25
+  minConns: 2
+  maxConnLifetime: 120s
+  maxConnIdleTime: 300s
 
 redis:
   host: localhost

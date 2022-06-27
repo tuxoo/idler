@@ -36,7 +36,7 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 // @Router      /user/sign-up 	[post]
 func (h *Handler) signUp(c *gin.Context) {
 	var signUpDTO dto.SignUpDTO
-	if err := c.BindJSON(&signUpDTO); err != nil {
+	if err := c.ShouldBindJSON(&signUpDTO); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
@@ -64,7 +64,7 @@ func (h *Handler) signUp(c *gin.Context) {
 // @Router 		/user/sign-in 		[post]
 func (h *Handler) signIn(c *gin.Context) {
 	var signInDTO dto.SignInDTO
-	if err := c.BindJSON(&signInDTO); err != nil {
+	if err := c.ShouldBindJSON(&signInDTO); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -94,12 +94,12 @@ func (h *Handler) signIn(c *gin.Context) {
 // @Router 		/user/verify 		[post]
 func (h *Handler) verifyUser(c *gin.Context) {
 	var verifyDTO dto.VerifyDTO
-	if err := c.BindJSON(&verifyDTO); err != nil {
+	if err := c.ShouldBindJSON(&verifyDTO); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if err := h.userService.VerifyUser(c, verifyDTO); err != nil {
+	if err := h.userService.VerifyUser(c.Request.Context(), verifyDTO); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 
@@ -151,7 +151,7 @@ func (h *Handler) getAllUsers(c *gin.Context) {
 		return
 	}
 
-	users, err := h.userService.GetAll(c)
+	users, err := h.userService.GetAll(c.Request.Context())
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -179,7 +179,7 @@ func (h *Handler) getUserByEmail(c *gin.Context) {
 		return
 	}
 
-	user, err := h.userService.GetByEmail(c, c.Param("email"))
+	user, err := h.userService.GetByEmail(c.Request.Context(), c.Param("email"))
 	if err != nil {
 		newErrorResponse(c, http.StatusNotFound, err.Error())
 		return
