@@ -59,8 +59,8 @@ services:
       idler-net:
         ipv4_address: 172.28.1.4
 
-  idler-app:
-    container_name: idler-app
+  app-idler:
+    container_name: app-idler
     build: ./
     restart: unless-stopped
     env_file:
@@ -69,6 +69,7 @@ services:
       - ${HTTP_PORT}:9000
     depends_on:
       - postgres-idler
+      - mongo-idler
     networks:
       idler-net:
         ipv4_address: 172.28.1.5

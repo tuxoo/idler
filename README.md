@@ -14,10 +14,6 @@ POSTGRES_PASSWORD=[your postgres password here]
 
 LIQUIBASE_VERSION=[your liquibase version here]
 
-REDIS_VERSION=[your redis version here]
-REDIS_PORT=[your redis port here]
-REDIS_PASSWORD=[your redis password here]
-
 MONGO_VERSION=[your mongo version here]
 MONGO_HOST=host.docker.internal
 MONGO_PORT=[your mongo port here]
@@ -36,4 +32,9 @@ Command for building application
 Command for running tests application
 ```dotenv
 - make build
+```
+
+Command for running docker containers
+```dotenv
+- make docker
 ```

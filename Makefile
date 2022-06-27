@@ -20,3 +20,6 @@ build: test
 
 test:
 	go test -v ./test/...
+
+docker:
+	docker compose up
