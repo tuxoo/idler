@@ -24,6 +24,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 // @title        Idler Application
@@ -79,7 +80,7 @@ func Run(configPath string) {
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 	tokenManager := auth.NewJWTTokenManager(cfg.Auth.JWT.SigningKey)
 
-	userCache := cache.NewMemoryCache[string, dto.UserDTO]()
+	userCache := cache.NewGCache[string, dto.UserDTO](cfg.Cache.Size, cfg.Cache.Expires)
 
 	postgresRepositories := postgresrepository.NewRepositories(postgresDB)
 	mongoRepositories := mongorepository.NewRepositories(mongoDB)
@@ -106,7 +107,7 @@ func Run(configPath string) {
 		}
 	}()
 
-	poolCache := cache.NewMemoryCache[UUID, ws.Pool]()
+	poolCache := cache.NewGCache[UUID, ws.Pool](10, 30*time.Minute)
 	wsHandler := ws.NewHandler(cfg.WS, poolCache, services.MessageService, services.ConversationService).InitWSConversations()
 	wsServer := server.NewWSServer(cfg, wsHandler)
 

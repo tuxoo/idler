@@ -60,7 +60,10 @@ func (h *Handler) CreateWSConversation(c *gin.Context) {
 	pool, err := h.HubCache.Get(c.Request.Context(), id)
 	if err != nil && err.Error() == "cache: value not found" {
 		pool = NewPool(id)
-		h.HubCache.Set(c.Request.Context(), id, pool)
+		err := h.HubCache.Set(c.Request.Context(), id, pool)
+		if err != nil {
+			return
+		}
 		go pool.Run()
 	}
 

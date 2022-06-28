@@ -3,7 +3,6 @@ package config
 import (
 	"github.com/eugene-krivtsov/idler/pkg/db/mongo"
 	"github.com/eugene-krivtsov/idler/pkg/db/postgres"
-	"github.com/eugene-krivtsov/idler/pkg/db/redis"
 	"github.com/spf13/viper"
 	"strings"
 	"time"
@@ -21,8 +20,8 @@ type (
 		HTTP     HTTPConfig
 		Auth     AuthConfig
 		Postgres postgres.Config
-		Redis    redis.Config
 		Mongo    mongo.Config
+		Cache    CacheConfig
 		WS       WSConfig
 		Mail     MailConfig
 	}
@@ -43,6 +42,11 @@ type (
 	JWTConfig struct {
 		TokenTTL   time.Duration
 		SigningKey string
+	}
+
+	CacheConfig struct {
+		Size    int
+		Expires time.Duration
 	}
 
 	WSConfig struct {
@@ -109,15 +113,11 @@ func parseEnv() error {
 		return err
 	}
 
-	if err := parseRedisEnv(); err != nil {
-		return err
-	}
-
 	if err := parseMongoEnv(); err != nil {
 		return err
 	}
 
-	if err := parseLineEnv("password", "salt"); err != nil {
+	if err := parseLineEnv("hash", "salt"); err != nil {
 		return err
 	}
 
@@ -177,18 +177,6 @@ func parseHttpEnv() error {
 	return viper.BindEnv("http.port", "HTTP_PORT")
 }
 
-func parseRedisEnv() error {
-	if err := viper.BindEnv("redis.host", "REDIS_HOST"); err != nil {
-		return err
-	}
-
-	if err := viper.BindEnv("redis.port", "REDIS_PORT"); err != nil {
-		return err
-	}
-
-	return viper.BindEnv("redis.password", "REDIS_PASSWORD")
-}
-
 func parsePostgresEnv() error {
 
 	if err := viper.BindEnv("postgres.host", "POSTGRES_HOST"); err != nil {
@@ -228,7 +216,7 @@ func unmarshalConfig(cfg *Config) error {
 		return err
 	}
 
-	if err := viper.UnmarshalKey("redis", &cfg.Redis); err != nil {
+	if err := viper.UnmarshalKey("cache", &cfg.Cache); err != nil {
 		return err
 	}
 
@@ -259,11 +247,6 @@ func setFromEnv(cfg *Config) {
 	cfg.Postgres.DB = viper.GetString("postgres.db")
 	cfg.Postgres.User = viper.GetString("postgres.user")
 	cfg.Postgres.Password = viper.GetString("postgres.password")
-
-	cfg.Redis.Host = viper.GetString("redis.host")
-	cfg.Redis.Port = viper.GetString("redis.port")
-	cfg.Redis.Password = viper.GetString("redis.password")
-	cfg.Redis.Expires = viper.GetDuration("redis.expires")
 
 	cfg.WS.Port = viper.GetString("websocket.port")
 

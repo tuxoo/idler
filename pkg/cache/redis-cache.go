@@ -2,7 +2,7 @@ package cache
 
 import (
 	"context"
-	json2 "encoding/json"
+	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"time"
 )
@@ -19,13 +19,14 @@ func NewRedisCache[K string, V any](client *redis.Client, expires time.Duration)
 	}
 }
 
-func (c *RedisCache[K, V]) Set(ctx context.Context, key K, value *V) {
-	json, err := json2.Marshal(value)
+func (c *RedisCache[K, V]) Set(ctx context.Context, key K, value *V) error {
+	val, err := json.Marshal(value)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	c.RedisClient.Set(ctx, string(key), json, c.Expires*time.Second)
+	c.RedisClient.Set(ctx, string(key), val, c.Expires*time.Second)
+	return nil
 }
 
 func (c *RedisCache[K, V]) Get(ctx context.Context, key K) (*V, error) {
@@ -35,7 +36,7 @@ func (c *RedisCache[K, V]) Get(ctx context.Context, key K) (*V, error) {
 	}
 
 	var value V
-	if err := json2.Unmarshal([]byte(strValue), &value); err != nil {
+	if err := json.Unmarshal([]byte(strValue), &value); err != nil {
 		panic(err)
 	}
 

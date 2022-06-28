@@ -17,11 +17,9 @@ postgres:
   maxConnLifetime: 120s
   maxConnIdleTime: 300s
 
-redis:
-  host: localhost
-  port: 6379
-  db: 0
-  expires: 360m
+cache:
+  size: 100000
+  expires: 4h
 
 websocket:
   port: 8000

@@ -17,10 +17,11 @@ func NewMemoryCache[K comparable, V any]() *MemoryCache[K, V] {
 	}
 }
 
-func (c *MemoryCache[K, V]) Set(ctx context.Context, key K, value *V) {
+func (c *MemoryCache[K, V]) Set(ctx context.Context, key K, value *V) error {
 	c.Lock()
 	c.cache[key] = *value
 	c.Unlock()
+	return nil
 }
 
 func (c *MemoryCache[K, V]) Get(ctx context.Context, key K) (*V, error) {

@@ -86,7 +86,9 @@ func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth
 	}
 
 	id := user.Id.String()
-	s.userCache.Set(ctx, id, user)
+	if err := s.userCache.Set(ctx, id, user); err != nil {
+		return token, err
+	}
 
 	token, err = s.tokenManager.GenerateToken(id, s.tokenTTL)
 	return
@@ -94,7 +96,7 @@ func (s *UserService) SignIn(ctx context.Context, dto dto.SignInDTO) (token auth
 
 func (s *UserService) GetById(ctx context.Context, id UUID) (user *dto.UserDTO, err error) {
 	user, err = s.userCache.Get(ctx, id.String())
-	if err != nil {
+	if user == nil && err != nil {
 		user, err = s.repository.FindById(ctx, id)
 	}
 	return
