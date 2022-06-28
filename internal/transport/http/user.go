@@ -100,7 +100,7 @@ func (h *Handler) verifyUser(c *gin.Context) {
 	}
 
 	if err := h.userService.VerifyUser(c.Request.Context(), verifyDTO); err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
 	}
 
 	c.Status(http.StatusOK)

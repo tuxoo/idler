@@ -68,8 +68,12 @@ func (s *UserService) VerifyUser(ctx context.Context, verifyDTO dto.VerifyDTO) e
 		return errors.New("unknown user")
 	}
 
+	if user.IsEnabled {
+		return errors.New("user already active")
+	}
+
 	if verifyDTO.CheckCode != s.hasher.Hash(user.Name) {
-		return errors.New("illegal code")
+		return errors.New("illegal check code")
 	}
 
 	return s.repository.UpdateById(ctx, user.Id)

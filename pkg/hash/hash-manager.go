@@ -3,20 +3,23 @@ package hash
 import (
 	"crypto/sha1"
 	"fmt"
+	"hash"
 )
 
-// SHA1Hasher uses SHA1 to hash passwords with provided salt
 type SHA1Hasher struct {
-	salt string
+	salt   string
+	hasher hash.Hash
 }
 
 func NewSHA1Hasher(salt string) *SHA1Hasher {
-	return &SHA1Hasher{salt: salt}
+	return &SHA1Hasher{
+		salt:   salt,
+		hasher: sha1.New(),
+	}
 }
 
 func (h *SHA1Hasher) Hash(content string) string {
-	hash := sha1.New()
-	hash.Write([]byte(content))
+	h.hasher.Write([]byte(content))
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(h.salt)))
+	return fmt.Sprintf("%x", h.hasher.Sum([]byte(h.salt)))
 }
