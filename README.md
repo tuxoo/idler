@@ -1,8 +1,10 @@
 # Backend application IDLER chat service
 
 ###
-- go 1.18.2
-- docker
+- GO 1.18.2
+- GIN
+- PGX
+- GCACHE
 
 For application need EnvFile by Borys Pierov plugin by .env file which contains:
 ```dotenv
