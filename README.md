@@ -6,7 +6,7 @@
 - PGX
 - GCACHE
 
-For application need EnvFile by Borys Pierov plugin by .env file which contains:
+For application need EnvFile by Borys Pierov plugin and .env file which contains:
 ```dotenv
 POSTGRES_VERSION=[your postgres version here]
 POSTGRES_PORT=[your postgres port here]
