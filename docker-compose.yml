@@ -48,6 +48,35 @@ services:
       idler-net:
         ipv4_address: 172.28.1.4
 
+  grafana-idler:
+    container_name: grafana-idler
+    image: grafana/grafana:${GRAFANA_VERSION}
+    restart: on-failure
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./grafana:/etc/grafana/provisioning
+      - ./.docker-volumes/grafana:/var/lib/grafana
+    ports:
+      - ${GRAFANA_PORT}:3000
+    networks:
+      idler-net:
+        ipv4_address: 172.28.1.5
+
+  prometheus-idler:
+    container_name: prometheus-idler
+    image: prom/prometheus:${PROMETHEUS_VERSION}
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./.docker-volumes/prometheus:/prometheus
+    ports:
+      - ${PROMETHEUS_PORT}:9090
+    networks:
+      idler-net:
+        ipv4_address: 172.28.1.6
+
   app-idler:
     container_name: app-idler
     build: ./
@@ -61,7 +90,7 @@ services:
       - mongo-idler
     networks:
       idler-net:
-        ipv4_address: 172.28.1.5
+        ipv4_address: 172.28.1.7
 
 networks:
   idler-net:

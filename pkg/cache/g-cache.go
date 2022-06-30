@@ -11,10 +11,8 @@ type GCache[K comparable, V any] struct {
 }
 
 func NewGCache[K comparable, V any](size int, expires time.Duration) *GCache[K, V] {
-	cache := gcache.New(size).Expiration(expires).LRU().Build()
-
 	return &GCache[K, V]{
-		cache: cache,
+		cache: gcache.New(size).Expiration(expires).LRU().Build(),
 	}
 }
 

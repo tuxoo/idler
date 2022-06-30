@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/eugene-krivtsov/idler/internal/config"
-	reuseport "github.com/kavu/go_reuseport"
+	"github.com/kavu/go_reuseport"
 	"net/http"
 )
 

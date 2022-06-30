@@ -52,6 +52,7 @@ func (h *Handler) Init(cfg config.HTTPConfig) *gin.Engine {
 		context.String(http.StatusOK, "pong")
 	})
 
+	h.initMetrics(router)
 	h.initApi(router)
 
 	return router
@@ -62,5 +63,12 @@ func (h *Handler) initApi(router *gin.Engine) {
 	{
 		h.initUserRoutes(api)
 		h.initConversationRoutes(api)
+	}
+}
+
+func (h *Handler) initMetrics(router *gin.Engine) {
+	metrics := router.Group("/metrics")
+	{
+		h.initMetricRoutes(metrics)
 	}
 }
