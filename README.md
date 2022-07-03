@@ -8,15 +8,15 @@
 
 For application need EnvFile by Borys Pierov plugin and .env file which contains:
 ```dotenv
-POSTGRES_VERSION=[your postgres version here]
+POSTGRES_VERSION=14
 POSTGRES_PORT=[your postgres port here]
 POSTGRES_SCHEMA=[your postgres schema here]
 POSTGRES_USER=[your postgres user here]
 POSTGRES_PASSWORD=[your postgres password here]
 
-LIQUIBASE_VERSION=[your liquibase version here]
+LIQUIBASE_VERSION=4.11
 
-MONGO_VERSION=[your mongo version here]
+MONGO_VERSION=4.4.6
 MONGO_HOST=[your mongo host here]
 MONGO_PORT=[your mongo port here]
 MONGO_DB=[your mongo db here]
