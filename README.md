@@ -40,3 +40,5 @@ Command for running docker containers
 ```dotenv
 - make docker
 ```
+
+Swagger documentation http://localhost:9000/swagger/index.html
