@@ -21,7 +21,7 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 func (r *UserRepository) Save(ctx context.Context, user entity.User) (*dto.UserDTO, error) {
 	var newUser dto.UserDTO
 	query := fmt.Sprintf("INSERT INTO %s (name, login_email, password_hash, registered_at, visited_at, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, login_email, registered_at, visited_at, role, is_enabled", userTable)
-	row := r.db.QueryRow(ctx, query, user.Name, user.LoginEmail, user.PasswordHash, user.RegisteredAt, user.VisitedAt, entity.UserRole)
+	row := r.db.QueryRow(ctx, query, user.Name, user.LoginEmail, user.PasswordHash, user.RegisteredAt, user.VisitedAt, user.Role)
 
 	if err := row.Scan(&newUser.Id, &newUser.Name, &newUser.LoginEmail, &newUser.RegisteredAt, &newUser.VisitedAt, &newUser.Role, &newUser.IsEnabled); err != nil {
 		return &newUser, err

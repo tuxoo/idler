@@ -41,6 +41,7 @@ func (s *UserService) SignUp(ctx context.Context, dto dto.SignUpDTO) error {
 		PasswordHash: s.hasher.Hash(dto.Password),
 		RegisteredAt: time.Now(),
 		VisitedAt:    time.Now(),
+		Role:         entity.UserRole,
 	}
 
 	_, err := s.repository.Save(ctx, user)

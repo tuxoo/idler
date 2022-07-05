@@ -4,8 +4,8 @@ import "time"
 import . "github.com/google/uuid"
 
 const (
-	UserRole  = "USER"
-	ADMINRole = "ADMIN"
+	UserRole   = "USER"
+	AdminNRole = "ADMIN"
 )
 
 type User struct {

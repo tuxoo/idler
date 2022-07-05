@@ -9,8 +9,8 @@
 For application need EnvFile by Borys Pierov plugin and .env file which contains:
 ```dotenv
 POSTGRES_VERSION=14
-POSTGRES_PORT=[your postgres port here]
-POSTGRES_SCHEMA=[your postgres schema here]
+POSTGRES_PORT=idler
+POSTGRES_SCHEMA=idler
 POSTGRES_USER=[your postgres user here]
 POSTGRES_PASSWORD=[your postgres password here]
 
@@ -34,7 +34,11 @@ MONGO_INITDB_ROOT_PASSWORD=[your mongo password here]
 PASSWORD_SALT=[your salt here]
 JWT_SIGNING_KEY=[your signing key here]
 ```
-
+For successfully running liquibase need to append in db/liquibase.properties:
+```dotenv
+username: [your postgres user here]
+password: [your postgres password here]
+```
 Command for building application
 ```dotenv
 - make build
