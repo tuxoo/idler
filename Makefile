@@ -7,6 +7,9 @@ lint:
 swagger:
 	swag init -g ./internal/app/idler-service/app.go
 
+tidy:
+	go mod tidy
+
 clean:
 	go clean -modcache
 
