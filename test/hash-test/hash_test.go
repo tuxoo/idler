@@ -2,8 +2,8 @@ package hash_test
 
 import (
 	"fmt"
-	"github.com/eugene-krivtsov/idler/pkg/hash"
 	"github.com/stretchr/testify/assert"
+	"github.com/tuxoo/idler/pkg/hash"
 	"testing"
 )
 

@@ -2,10 +2,10 @@ package postgres_repository
 
 import (
 	"context"
-	"github.com/eugene-krivtsov/idler/internal/model/dto"
-	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	. "github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/tuxoo/idler/internal/model/dto"
+	"github.com/tuxoo/idler/internal/model/entity"
 )
 
 const (

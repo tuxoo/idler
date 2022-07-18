@@ -3,8 +3,8 @@ package cache_test
 import (
 	"context"
 	"fmt"
-	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/stretchr/testify/assert"
+	"github.com/tuxoo/idler/pkg/cache"
 	"testing"
 )
 

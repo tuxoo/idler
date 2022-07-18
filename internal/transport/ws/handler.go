@@ -1,12 +1,12 @@
 package ws
 
 import (
-	"github.com/eugene-krivtsov/idler/internal/config"
-	"github.com/eugene-krivtsov/idler/internal/service"
-	"github.com/eugene-krivtsov/idler/pkg/cache"
 	"github.com/gin-gonic/gin"
 	. "github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/tuxoo/idler/internal/config"
+	"github.com/tuxoo/idler/internal/service"
+	"github.com/tuxoo/idler/pkg/cache"
 	"net/http"
 )
 

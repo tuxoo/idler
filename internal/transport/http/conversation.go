@@ -2,9 +2,9 @@ package http
 
 import (
 	"fmt"
-	"github.com/eugene-krivtsov/idler/internal/model/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/tuxoo/idler/internal/model/dto"
 	"net/http"
 )
 

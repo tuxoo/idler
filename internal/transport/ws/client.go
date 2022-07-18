@@ -2,10 +2,10 @@ package ws
 
 import (
 	"context"
-	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	"github.com/eugene-krivtsov/idler/internal/service"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
+	"github.com/tuxoo/idler/internal/model/entity"
+	"github.com/tuxoo/idler/internal/service"
 	"time"
 )
 

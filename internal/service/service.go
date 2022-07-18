@@ -2,15 +2,15 @@ package service
 
 import (
 	"context"
-	"github.com/eugene-krivtsov/idler/internal/model/dto"
-	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	mongo_repository "github.com/eugene-krivtsov/idler/internal/repository/mongo-repository"
-	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
-	"github.com/eugene-krivtsov/idler/internal/transport/gRPC/client"
-	"github.com/eugene-krivtsov/idler/pkg/auth"
-	"github.com/eugene-krivtsov/idler/pkg/cache"
-	"github.com/eugene-krivtsov/idler/pkg/hash"
 	. "github.com/google/uuid"
+	"github.com/tuxoo/idler/internal/model/dto"
+	"github.com/tuxoo/idler/internal/model/entity"
+	mongo_repository "github.com/tuxoo/idler/internal/repository/mongo-repository"
+	postgres_repository "github.com/tuxoo/idler/internal/repository/postgres-repositrory"
+	"github.com/tuxoo/idler/internal/transport/gRPC/client"
+	"github.com/tuxoo/idler/pkg/auth"
+	"github.com/tuxoo/idler/pkg/cache"
+	"github.com/tuxoo/idler/pkg/hash"
 	"time"
 )
 

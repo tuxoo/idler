@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
-	"github.com/eugene-krivtsov/idler/internal/model/dto"
-	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	"github.com/eugene-krivtsov/idler/internal/repository/postgres-repositrory"
 	. "github.com/google/uuid"
+	"github.com/tuxoo/idler/internal/model/dto"
+	"github.com/tuxoo/idler/internal/model/entity"
+	postgres_repository "github.com/tuxoo/idler/internal/repository/postgres-repositrory"
 )
 
 type ConversationService struct {

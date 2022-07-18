@@ -2,8 +2,8 @@ package ws
 
 import (
 	"fmt"
-	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	. "github.com/google/uuid"
+	"github.com/tuxoo/idler/internal/model/entity"
 )
 
 type Pool struct {

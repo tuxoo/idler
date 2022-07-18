@@ -2,9 +2,9 @@ package http
 
 import (
 	"errors"
-	"github.com/eugene-krivtsov/idler/pkg/auth"
 	"github.com/gin-gonic/gin"
 	. "github.com/google/uuid"
+	"github.com/tuxoo/idler/pkg/auth"
 	"net/http"
 	"strings"
 )

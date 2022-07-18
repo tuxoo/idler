@@ -2,8 +2,8 @@ package mongo_repository
 
 import (
 	"context"
-	"github.com/eugene-krivtsov/idler/internal/model/entity"
 	. "github.com/google/uuid"
+	"github.com/tuxoo/idler/internal/model/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

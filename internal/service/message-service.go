@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"github.com/eugene-krivtsov/idler/internal/model/entity"
-	"github.com/eugene-krivtsov/idler/internal/repository/mongo-repository"
 	. "github.com/google/uuid"
+	"github.com/tuxoo/idler/internal/model/entity"
+	"github.com/tuxoo/idler/internal/repository/mongo-repository"
 )
 
 type MessageService struct {

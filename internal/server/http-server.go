@@ -3,8 +3,8 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/eugene-krivtsov/idler/internal/config"
 	"github.com/kavu/go_reuseport"
+	"github.com/tuxoo/idler/internal/config"
 	"net/http"
 )
 

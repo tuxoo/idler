@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/eugene-krivtsov/idler/internal/transport/gRPC/api"
+	"github.com/tuxoo/idler/internal/transport/gRPC/api"
 	"google.golang.org/grpc"
 )
 

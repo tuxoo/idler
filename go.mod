@@ -1,4 +1,4 @@
-module github.com/eugene-krivtsov/idler
+module github.com/tuxoo/idler
 
 go 1.18
 

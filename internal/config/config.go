@@ -1,9 +1,9 @@
 package config
 
 import (
-	"github.com/eugene-krivtsov/idler/pkg/db/mongo"
-	"github.com/eugene-krivtsov/idler/pkg/db/postgres"
 	"github.com/spf13/viper"
+	"github.com/tuxoo/idler/pkg/db/mongo"
+	"github.com/tuxoo/idler/pkg/db/postgres"
 	"strings"
 	"time"
 )
